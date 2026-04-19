@@ -530,7 +530,6 @@ function surf_sendToTelegram_(name, whatsapp, message, originPage) {
   var text = "🏄‍♂️ *New Surf Trip Request*\n\n" +
              "👤 *Name:* " + name + "\n" +
              "📱 *WhatsApp:* " + whatsapp + "\n" +
-             "📄 *Page:* `" + originPage + "`\n" +
              "💬 *Message:*\n" + message;
 
   var url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
