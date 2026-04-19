@@ -125,19 +125,21 @@
       </section>
     </main>
 
-    <!-- Newsletter -->
-    <section class="nl container" aria-labelledby="nl-title">
-      <div class="nl__card">
-        <div>
-          <p class="nl__badge">Newsletter</p>
-          <h2 class="nl__title" id="nl-title">Don't miss a single wave 🌊</h2>
-          <p class="nl__sub">The best spots, sessions, and surf tips in Morocco — directly in your inbox.</p>
-          <p class="nl__msg" id="nl-msg-home" aria-live="polite"></p>
-        </div>
-        <div>
-          <form class="nl__form" id="nl-form-home" novalidate>
-            <input class="nl__input" id="nl-email-home" type="email" placeholder="your@email.com" autocomplete="email" required />
-            <button class="nl__btn" type="submit" id="nl-btn-home">Subscribe for free</button>
+    <!-- Surf Booking Service Ad -->
+    <section class="container" aria-labelledby="surf-service-title">
+      <div class="surf-service-ad">
+        <div class="surf-service__card">
+          <div class="surf-service__info">
+            <p class="surf-service__badge">🏄‍♂️ Organize Your Trip</p>
+            <h2 class="surf-service__title" id="surf-service-title">Interested in a Surf Trip to Morocco?</h2>
+            <p class="surf-service__sub">We can organize accommodation and the best surf sessions for you in magnificent places. Let's build your dream trip!</p>
+            <p class="surf-service__msg" id="surf-service-msg" aria-live="polite"></p>
+          </div>
+          <form class="surf-service__form" id="surf-service-form" novalidate>
+            <input class="surf-service__input" id="surf-service-name" type="text" placeholder="Your Name" required />
+            <input class="surf-service__input" id="surf-service-wa" type="tel" placeholder="WhatsApp Number (e.g. +33612345678)" required />
+            <textarea class="surf-service__input surf-service__input--msg" id="surf-service-text" placeholder="Your message..." rows="3" required></textarea>
+            <button class="surf-service__btn" type="submit" id="surf-service-btn">Send Request</button>
           </form>
         </div>
       </div>
@@ -163,44 +165,62 @@
 
     <script>
     (function(){
-      var WA_NL_ENDPOINT = "VOTRE_WEB_APP_URL"; // ← Replace with your Google Apps Script Web App URL
-      function nlSubmit(formId, emailId, btnId, msgId) {
-        var form = document.getElementById(formId);
-        var emailEl = document.getElementById(emailId);
-        var btn = document.getElementById(btnId);
-        var msg = document.getElementById(msgId);
-        if (!form) return;
-        form.addEventListener("submit", function(e) {
-          e.preventDefault();
-          var email = (emailEl ? emailEl.value : "").trim();
-          if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-            msg.textContent = "Please enter a valid email address.";
-            msg.className = "nl__msg nl__msg--err";
-            return;
-          }
-          btn.disabled = true;
-          btn.textContent = "Sending...";
-          msg.textContent = "Just a moment...";
-          msg.className = "nl__msg nl__msg--wait";
-          fetch(WA_NL_ENDPOINT + "?action=subscribe&email=" + encodeURIComponent(email))
-            .then(function(r){ return r.json(); })
-            .then(function(data){
-              if (data.status === "ok" || data.status === "exists") {
-                msg.textContent = data.status === "exists" ? "Already subscribed — thank you!" : "🎉 Welcome! Please check your inbox.";
-                msg.className = "nl__msg nl__msg--ok";
-                if (emailEl) emailEl.value = "";
-                btn.textContent = "✓ Subscribed!";
-              } else { throw new Error(data.message || "Error"); }
-            })
-            .catch(function(){
-              msg.textContent = "An error occurred. Please try again.";
-              msg.className = "nl__msg nl__msg--err";
-              btn.disabled = false;
-              btn.textContent = "Subscribe for free";
-            });
+      var WA = "VOTRE_WEB_APP_URL"; // ← Replace with your Google Apps Script Web App URL
+      var form  = document.getElementById("surf-service-form");
+      var iName = document.getElementById("surf-service-name");
+      var iWa   = document.getElementById("surf-service-wa");
+      var iTxt  = document.getElementById("surf-service-text");
+      var btn   = document.getElementById("surf-service-btn");
+      var msg   = document.getElementById("surf-service-msg");
+      if (!form) return;
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        var vName = (iName ? iName.value : "").trim();
+        var vWa = (iWa ? iWa.value : "").trim();
+        var vTxt = (iTxt ? iTxt.value : "").trim();
+
+        if (!vName || !vWa || !vTxt) {
+          msg.textContent = "Please fill in all fields.";
+          msg.className = "surf-service__msg surf-service__msg--err";
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "Sending...";
+        msg.textContent = "Sending your request...";
+        msg.className = "surf-service__msg surf-service__msg--wait";
+
+        var payload = {
+          action: "surftrip",
+          name: vName,
+          whatsapp: vWa,
+          message: vTxt,
+          page: window.location.href
+        };
+
+        fetch(WA, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" }, // text/plain avoids CORS preflight
+          body: JSON.stringify(payload)
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d.status === "ok") {
+            msg.textContent = "🎉 Request sent! We will contact you soon.";
+            msg.className = "surf-service__msg surf-service__msg--ok";
+            if (iName) iName.value = "";
+            if (iWa) iWa.value = "";
+            if (iTxt) iTxt.value = "";
+            btn.textContent = "✓ Sent!";
+          } else { throw new Error(d.message || "Error"); }
+        })
+        .catch(function(e){
+          console.error(e);
+          msg.textContent = "An error occurred. Please check your connection or WebApp URL.";
+          msg.className = "surf-service__msg surf-service__msg--err";
+          btn.disabled = false;
+          btn.textContent = "Send Request";
         });
-      }
-      nlSubmit("nl-form-home", "nl-email-home", "nl-btn-home", "nl-msg-home");
+      });
     })();
 
     // Set canonical dynamically

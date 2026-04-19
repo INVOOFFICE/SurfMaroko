@@ -516,92 +516,83 @@ function surf_sendWebhook_(count, firstTitle) {
   } catch(e) { Logger.log('Webhook error: ' + e); }
 }
 
-// ── NEWSLETTER WEB APP ────────────────────────────────────────────────────────
+// ── SURF TRIP TELEGRAM WEBHOOK ──────────────────────────────────────────────────
 
-var NL_SHEET_NAME = 'Newsletter';
-var NL_SITE_NAME  = 'MarocSurf';
+function surf_sendToTelegram_(name, whatsapp, message, originPage) {
+  var botToken = surf_getProp_('TELEGRAM_BOT_TOKEN');
+  var chatId = surf_getProp_('TELEGRAM_CHAT_ID');
 
-function surf_nlGetSheet_() {
-  var ss = surf_getSpreadsheet_();
-  var sh = ss.getSheetByName(NL_SHEET_NAME);
-  if (!sh) {
-    sh = ss.insertSheet(NL_SHEET_NAME);
-    sh.getRange(1,1,1,4).setValues([['Email','Inscrit le','Statut','Token désinscription']]);
-    sh.setFrozenRows(1);
-  }
-  return sh;
-}
-
-function surf_nlToken_(email) {
-  return Utilities.base64EncodeWebSafe(
-    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, email + 'marocsurf_salt_2026')
-  ).slice(0, 24);
-}
-
-function surf_nlSubscribe_(email) {
-  email = String(email || '').trim().toLowerCase();
-  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return { status: 'error', message: 'Email invalide.' };
-
-  var sh = surf_nlGetSheet_();
-  var last = sh.getLastRow();
-  if (last >= 2) {
-    var emails = sh.getRange(2, 1, last - 1, 1).getValues().flat().map(String).map(function(s){ return s.toLowerCase().trim(); });
-    if (emails.includes(email)) return { status: 'exists', message: 'Déjà abonné(e).' };
+  if (!botToken || !chatId) {
+    Logger.log('Telegram credentials missing.');
+    return { status: 'error', message: 'Telegram configuration is missing in Script Properties.' };
   }
 
-  var token = surf_nlToken_(email);
-  sh.appendRow([email, new Date().toISOString(), 'ACTIVE', token]);
+  var text = "🏄‍♂️ *New Surf Trip Request*\n\n" +
+             "👤 *Name:* " + name + "\n" +
+             "📱 *WhatsApp:* " + whatsapp + "\n" +
+             "📄 *Page:* `" + originPage + "`\n" +
+             "💬 *Message:*\n" + message;
 
-  var origin = (surf_getProp_('SURF_SITE_ORIGIN') || 'https://marocsurf.com').replace(/\/+$/, '');
-  var unsubUrl = origin + '/?unsubscribe=' + encodeURIComponent(token);
+  var url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
+  var payload = {
+    chat_id: chatId,
+    text: text,
+    parse_mode: "Markdown"
+  };
 
   try {
-    GmailApp.sendEmail(email, 'Welcome to ' + NL_SITE_NAME + ' 🌊', '', {
-      htmlBody:
-        '<div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#020d18;color:#fff;border-radius:12px;overflow:hidden;">' +
-        '<div style="background:linear-gradient(135deg,#0ea5e9,#06b6d4);padding:28px 32px;">' +
-        '<h1 style="margin:0;font-size:22px;color:#fff;">🌊 Welcome to ' + NL_SITE_NAME + '!</h1></div>' +
-        '<div style="padding:28px 32px;">' +
-        '<p style="color:rgba(255,255,255,0.85);line-height:1.7;">You are now subscribed to the Morocco surf blog. You\'ll receive the best articles on spots, seasons, and surf tips straight to your inbox.</p>' +
-        '<p style="color:rgba(255,255,255,0.85);line-height:1.7;">In the meantime, check out all our articles at <a href="' + origin + '" style="color:#06b6d4;">' + origin + '</a>.</p></div>' +
-        '<div style="padding:16px 32px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:rgba(255,255,255,0.4);">' +
-        '<a href="' + unsubUrl + '" style="color:rgba(255,255,255,0.4);">Unsubscribe</a></div></div>'
+    var res = UrlFetchApp.fetch(url, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
     });
-  } catch(e) { Logger.log('Welcome email error: ' + e); }
-
-  return { status: 'ok', message: 'Abonné(e) avec succès.' };
-}
-
-function surf_nlUnsubscribe_(token) {
-  token = String(token || '').trim();
-  if (!token) return { status: 'error', message: 'Token invalide.' };
-  var sh = surf_nlGetSheet_();
-  var last = sh.getLastRow();
-  if (last < 2) return { status: 'error', message: 'Non trouvé.' };
-  var data = sh.getRange(2, 1, last - 1, 4).getValues();
-  for (var i = 0; i < data.length; i++) {
-    if (String(data[i][3] || '').trim() === token) {
-      sh.getRange(i + 2, 3).setValue('UNSUBSCRIBED');
-      return { status: 'ok', message: 'Désabonné(e) avec succès.' };
+    var code = res.getResponseCode();
+    if (code === 200 || code === 201) {
+      return { status: 'ok' };
+    } else {
+      Logger.log("Telegram Error: " + res.getContentText());
+      return { status: 'error', message: 'Failed to dispatch to Telegram.' };
     }
+  } catch(e) {
+    Logger.log("Telegram Exception: " + e);
+    return { status: 'error', message: 'Telegram request failed.' };
   }
-  return { status: 'error', message: 'Token non trouvé.' };
 }
 
-// Web App endpoint (deploy as: Execute as Me, Anyone)
-function doGet(e) {
-  var action = e && e.parameter && e.parameter.action ? String(e.parameter.action).trim() : '';
-  var email  = e && e.parameter && e.parameter.email  ? String(e.parameter.email).trim()  : '';
-  var token  = e && e.parameter && e.parameter.token  ? String(e.parameter.token).trim()  : '';
+// Web App POST endpoint (deploy as: Execute as Me, Anyone)
+function doPost(e) {
+  var result = { status: 'error', message: 'Unknown error.' };
+  try {
+    var body = e.postData.contents;
+    var data = JSON.parse(body);
+    if (data.action === 'surftrip') {
+      var name = String(data.name || '').trim();
+      var wa = String(data.whatsapp || '').trim();
+      var msg = String(data.message || '').trim();
+      var page = String(data.page || '').trim();
 
-  var result;
-  if (action === 'subscribe')        result = surf_nlSubscribe_(email);
-  else if (action === 'unsubscribe') result = surf_nlUnsubscribe_(token);
-  else result = { status: 'error', message: 'Action inconnue.' };
+      if (!name || !wa || !msg) {
+        result = { status: 'error', message: 'All fields are required.' };
+      } else {
+        result = surf_sendToTelegram_(name, wa, msg, page);
+      }
+    } else {
+      result = { status: 'error', message: 'Unknown action.' };
+    }
+  } catch(ex) {
+    result = { status: 'error', message: 'Invalid JSON payload.' };
+  }
 
+  // Permet le fonctionnement sans problème CORS avec fetch preflight
   return ContentService
     .createTextOutput(JSON.stringify(result))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Simple fallback for accidental GET requests
+function doGet(e) {
+  return ContentService.createTextOutput("MoroccoSurf Service Webhook is active. Use POST to submit requests.");
 }
 
 // ── TRIGGERS ──────────────────────────────────────────────────────────────────

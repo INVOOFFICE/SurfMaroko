@@ -132,17 +132,20 @@ Named after the killer whales sometimes spotted offshore rather than the wave's 
           <h2>Why It Matters</h2>
           <p>Taghazout put Morocco on the global surfing map. Understanding its micro-climate and wave dynamics is essential for anyone planning a surf trip to North Africa.</p>
 
-          <div class="nl nl--inline" aria-label="Newsletter">
-            <div class="nl__card">
-              <div>
-                <p class="nl__badge">Newsletter</p>
-                <h3 class="nl__title">Enjoyed this article?</h3>
-                <p class="nl__sub">Get the best Morocco surf articles delivered right to your inbox.</p>
-                <p class="nl__msg" id="nl-msg-article" aria-live="polite"></p>
+          <!-- Surf Booking Service Ad -->
+          <div class="surf-service-ad" aria-label="Surf Trip Booking">
+            <div class="surf-service__card">
+              <div class="surf-service__info">
+                <p class="surf-service__badge">🏄‍♂️ Organize Your Trip</p>
+                <h3 class="surf-service__title">Interested in a Surf Trip to Morocco?</h3>
+                <p class="surf-service__sub">We can organize accommodation and the best surf sessions for you in magnificent places. Let's build your dream trip!</p>
+                <p class="surf-service__msg" id="surf-service-msg" aria-live="polite"></p>
               </div>
-              <form class="nl__form" id="nl-form-article" novalidate>
-                <input class="nl__input" id="nl-email-article" type="email" placeholder="your@email.com" autocomplete="email" required />
-                <button class="nl__btn" type="submit" id="nl-btn-article">Subscribe for free</button>
+              <form class="surf-service__form" id="surf-service-form" novalidate>
+                <input class="surf-service__input" id="surf-service-name" type="text" placeholder="Your Name" required />
+                <input class="surf-service__input" id="surf-service-wa" type="tel" placeholder="WhatsApp Number (e.g. +33612345678)" required />
+                <textarea class="surf-service__input surf-service__input--msg" id="surf-service-text" placeholder="Your message..." rows="3" required></textarea>
+                <button class="surf-service__btn" type="submit" id="surf-service-btn">Send Request</button>
               </form>
             </div>
           </div>
@@ -242,39 +245,60 @@ Named after the killer whales sometimes spotted offshore rather than the wave's 
     <script>
     (function(){
       var WA = "VOTRE_WEB_APP_URL"; // ← Replace with your Google Apps Script Web App URL
-      var form  = document.getElementById("nl-form-article");
-      var email = document.getElementById("nl-email-article");
-      var btn   = document.getElementById("nl-btn-article");
-      var msg   = document.getElementById("nl-msg-article");
+      var form  = document.getElementById("surf-service-form");
+      var iName = document.getElementById("surf-service-name");
+      var iWa   = document.getElementById("surf-service-wa");
+      var iTxt  = document.getElementById("surf-service-text");
+      var btn   = document.getElementById("surf-service-btn");
+      var msg   = document.getElementById("surf-service-msg");
       if (!form) return;
       form.addEventListener("submit", function(e) {
         e.preventDefault();
-        var val = (email ? email.value : "").trim();
-        if (!val || val.indexOf("@") < 1) {
-          msg.textContent = "Please enter a valid email address.";
-          msg.className = "nl__msg nl__msg--err";
+        var vName = (iName ? iName.value : "").trim();
+        var vWa = (iWa ? iWa.value : "").trim();
+        var vTxt = (iTxt ? iTxt.value : "").trim();
+
+        if (!vName || !vWa || !vTxt) {
+          msg.textContent = "Please fill in all fields.";
+          msg.className = "surf-service__msg surf-service__msg--err";
           return;
         }
         btn.disabled = true;
         btn.textContent = "Sending...";
-        msg.textContent = "Just a moment...";
-        msg.className = "nl__msg nl__msg--wait";
-        fetch(WA + "?action=subscribe&email=" + encodeURIComponent(val))
-          .then(function(r){ return r.json(); })
-          .then(function(d){
-            if (d.status === "ok" || d.status === "exists") {
-              msg.textContent = d.status === "exists" ? "Already subscribed — thank you!" : "🎉 Welcome! Please check your inbox.";
-              msg.className = "nl__msg nl__msg--ok";
-              if (email) email.value = "";
-              btn.textContent = "✓ Subscribed!";
-            } else { throw new Error(d.message || "Error"); }
-          })
-          .catch(function(){
-            msg.textContent = "An error occurred. Please try again.";
-            msg.className = "nl__msg nl__msg--err";
-            btn.disabled = false;
-            btn.textContent = "Subscribe for free";
-          });
+        msg.textContent = "Sending your request...";
+        msg.className = "surf-service__msg surf-service__msg--wait";
+
+        var payload = {
+          action: "surftrip",
+          name: vName,
+          whatsapp: vWa,
+          message: vTxt,
+          page: window.location.href
+        };
+
+        fetch(WA, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" }, // text/plain to avoid preflight issues on some GAS setups
+          body: JSON.stringify(payload)
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d.status === "ok") {
+            msg.textContent = "🎉 Request sent! We will contact you soon.";
+            msg.className = "surf-service__msg surf-service__msg--ok";
+            if (iName) iName.value = "";
+            if (iWa) iWa.value = "";
+            if (iTxt) iTxt.value = "";
+            btn.textContent = "✓ Sent!";
+          } else { throw new Error(d.message || "Error"); }
+        })
+        .catch(function(e){
+          console.error(e);
+          msg.textContent = "An error occurred. Please check your connection or WebApp URL.";
+          msg.className = "surf-service__msg surf-service__msg--err";
+          btn.disabled = false;
+          btn.textContent = "Send Request";
+        });
       });
     })();
     </script>

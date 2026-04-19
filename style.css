@@ -1123,6 +1123,99 @@ mark {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   SURF SERVICE AD
+═══════════════════════════════════════════════════════════ */
+.surf-service-ad {
+  margin: 40px 0;
+  display: block;
+}
+.surf-service__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: var(--shadow);
+}
+.surf-service__info {
+  flex: 1;
+}
+.surf-service__badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+  background: var(--brand-glow);
+  padding: 5px 12px;
+  border-radius: 99px;
+  margin: 0 0 12px;
+}
+.surf-service__title {
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.surf-service__sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+.surf-service__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.surf-service__input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.surf-service__input:focus { border-color: var(--brand); }
+.surf-service__input--msg { resize: vertical; min-height: 80px; }
+.surf-service__btn {
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: opacity var(--transition);
+  text-align: center;
+}
+.surf-service__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.surf-service__btn:hover:not(:disabled) { opacity: 0.85; }
+.surf-service__msg {
+  font-size: 13px;
+  margin-top: -6px;
+  font-weight: 600;
+}
+.surf-service__msg--ok { color: var(--brand3); } /* Teal */
+.surf-service__msg--err { color: #f87171; }
+.surf-service__msg--wait { color: var(--brand); }
+
+@media (min-width: 768px) {
+  .surf-service__card { flex-direction: row; align-items: flex-start; }
+  .surf-service__info { width: 45%; }
+  .surf-service__form { flex: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
