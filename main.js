@@ -230,15 +230,24 @@
       var imageUrl = a.image || allSite.defaultOgImage || "";
       var title = a.title || "";
       var cat = a.category || "Surf";
+      var summary = String(a.summary || a.description || "").replace(/<[^>]*>/g, " ").trim();
       var url = articleUrl(a);
+      var ago = timeAgo(a.publishedAt);
+      var rt = readingTime(a);
 
       html += '<a href="' + escapeHtml(url) + '" class="hero-slide' + isActive + '" data-index="' + i + '">' +
         '<div class="hero-slide__media">' +
           (imageUrl ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(title) + '" />' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;">🌊</div>') +
         '</div>' +
         '<div class="hero-slide__body">' +
-          '<span class="hero-slide__cat">' + escapeHtml(cat) + '</span>' +
+          '<div class="hero-slide__meta">' +
+            '<span class="hero-slide__cat">' + escapeHtml(cat) + '</span>' +
+            (ago ? '<span class="hero-slide__ago">' + escapeHtml(ago) + '</span>' : '') +
+            '<span class="hero-slide__rt">' + escapeHtml(rt) + '</span>' +
+          '</div>' +
           '<h3 class="hero-slide__title">' + escapeHtml(title) + '</h3>' +
+          '<p class="hero-slide__desc">' + escapeHtml(summary) + '</p>' +
+          '<div class="hero-slide__read">Read article &rarr;</div>' +
         '</div>' +
       '</a>';
     });
