@@ -234,33 +234,6 @@
     el.innerHTML = html;
   }
 
-  // Surf Weather Widget
-  function initSurfWidget() {
-    var contentEl = $("#surf-widget-content");
-    if (!contentEl) return;
-
-    fetch('https://api.swellcloud.net/v1/status')
-      .then(function(r) { 
-        if (!r.ok) throw new Error('API down');
-        return r.json();
-      })
-      .then(function(data) {
-        var height = data.height || data.waveHeight || 'N/A';
-        var swellDir = data.swellDirection || data.direction || 'N/A';
-        var wind = data.wind || data.windSpeed || 'N/A';
-
-        contentEl.innerHTML = 
-          '<div class="surf-data">' +
-            '<div class="surf-data__item"><span>Wave Height</span><strong>' + escapeHtml(height) + '</strong></div>' +
-            '<div class="surf-data__item"><span>Swell Dir</span><strong>' + escapeHtml(swellDir) + '</strong></div>' +
-            '<div class="surf-data__item"><span>Wind</span><strong>' + escapeHtml(wind) + '</strong></div>' +
-          '</div>';
-      })
-      .catch(function() {
-        contentEl.innerHTML = '<div style="color: #f87171; font-size: 13px; text-align: center;">Unable to load surf conditions. API is currently unavailable.</div>';
-      });
-  }
-
   // Search form
   function initSearch() {
     var form = $("#search-form");
@@ -292,7 +265,7 @@
     renderSkeletons();
     initSearch();
     initScrollTop();
-    initSurfWidget();
+
 
     // 1. Load surf-news-latest.json first (fast)
     fetch("surf-news-latest.json", { cache: "no-store" })

@@ -204,66 +204,6 @@ img { max-width: 100%; display: block; }
   line-height: 1.7;
 }
 
-/* ── SURF WIDGET ─────────────────────────────────────────── */
-.surf-widget {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  max-width: 600px;
-  margin: 0 auto 36px;
-  text-align: left;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.surf-widget__header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.surf-widget__header h3 {
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--brand);
-}
-.surf-widget__icon {
-  font-size: 20px;
-}
-.surf-widget__content {
-  color: var(--muted);
-  font-size: 14px;
-}
-.surf-data {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 16px 20px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-.surf-data__item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 100px;
-}
-.surf-data__item span {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-.surf-data__item strong {
-  font-size: 17px;
-  color: var(--text);
-  font-weight: 600;
-}
 
 /* Hero featured carousel */
 .hero__featured {
