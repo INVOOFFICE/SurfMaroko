@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Deep Ocean Slate Background -->
+  <rect width="512" height="512" rx="120" fill="#0b1120"/>
+  
+  <!-- Moroccan Amber glowing sun -->
+  <circle cx="256" cy="180" r="90" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="256" cy="180" r="130" fill="#f59e0b" opacity="0.25"/>
+
+  <!-- Back Wave (Sky Tint) -->
+  <path d="M-20 380 Q 120 200, 256 310 T 532 290 L 532 512 L -20 512 Z" fill="#38bdf8" opacity="0.7"/>
+
+  <!-- Front Wave (Ocean Blue) -->
+  <path d="M-20 460 Q 150 250, 310 380 T 532 380 L 532 512 L -20 512 Z" fill="#0284c7" />
+
+  <!-- Subtle white foam highlight -->
+  <path d="M-20 460 Q 150 250, 310 380 T 532 380" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.4"/>
+</svg>
