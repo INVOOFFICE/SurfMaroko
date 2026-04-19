@@ -221,17 +221,114 @@
     var el = $("#hero-featured");
     if (!el || !articles.length) return;
     var top5 = articles.slice(0, 5);
-    var html = '<div class="hero__carousel">' +
-      top5.map(function (a) {
-        return '<a class="hero-card" href="' + escapeHtml(articleUrl(a)) + '">' +
-          (a.image ? '<img class="hero-card__img" src="' + escapeHtml(a.image) + '" alt="' + escapeHtml(a.title) + '" loading="lazy" />' :
-            '<div class="hero-card__img" style="display:flex;align-items:center;justify-content:center;font-size:56px;background:rgba(14,165,233,0.1);">🌊</div>') +
-          '<div class="hero-card__body">' +
-          '<span class="hero-card__cat">' + escapeHtml(a.category || "Surf") + '</span>' +
-          '<p class="hero-card__title">' + escapeHtml(a.title) + '</p>' +
-          '</div></a>';
-      }).join("") + '</div>';
+
+    var html = '<div class="hero-slider" id="hero-slider">';
+    
+    // Build slides
+    top5.forEach(function (a, i) {
+      var isActive = i === 0 ? " is-active" : "";
+      var imageUrl = a.image || allSite.defaultOgImage || "";
+      var title = a.title || "";
+      var cat = a.category || "Surf";
+      var url = articleUrl(a);
+
+      html += '<a href="' + escapeHtml(url) + '" class="hero-slide' + isActive + '" data-index="' + i + '">' +
+        '<div class="hero-slide__media">' +
+          (imageUrl ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(title) + '" />' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;">🌊</div>') +
+        '</div>' +
+        '<div class="hero-slide__body">' +
+          '<span class="hero-slide__cat">' + escapeHtml(cat) + '</span>' +
+          '<h3 class="hero-slide__title">' + escapeHtml(title) + '</h3>' +
+        '</div>' +
+      '</a>';
+    });
+
+    // Build controls
+    if (top5.length > 1) {
+      html += '<div class="slider-nav">' +
+        '<button type="button" class="slider-btn prev" aria-label="Previous">❮</button>' +
+        '<button type="button" class="slider-btn next" aria-label="Next">❯</button>' +
+      '</div>';
+      
+      html += '<div class="slider-dots">';
+      top5.forEach(function (a, i) {
+        var isActive = i === 0 ? " is-active" : "";
+        html += '<button type="button" class="slider-dot' + isActive + '" data-index="' + i + '" aria-label="Slide ' + (i+1) + '"></button>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
     el.innerHTML = html;
+
+    // Logic for slider
+    if (top5.length > 1) {
+      initSliderJs();
+    }
+  }
+
+  function initSliderJs() {
+    var slider = $("#hero-slider");
+    if (!slider) return;
+    var slides = slider.querySelectorAll(".hero-slide");
+    var dots = slider.querySelectorAll(".slider-dot");
+    var prev = slider.querySelector(".slider-btn.prev");
+    var next = slider.querySelector(".slider-btn.next");
+    var currentIndex = 0;
+    var max = slides.length;
+    var interval;
+
+    function goToSlide(index) {
+      if (index < 0) index = max - 1;
+      if (index >= max) index = 0;
+      slides[currentIndex].classList.remove("is-active");
+      if(dots.length) dots[currentIndex].classList.remove("is-active");
+      
+      currentIndex = index;
+      
+      slides[currentIndex].classList.add("is-active");
+      if(dots.length) dots[currentIndex].classList.add("is-active");
+    }
+
+    function startAuto() {
+      stopAuto();
+      interval = setInterval(function() {
+        goToSlide(currentIndex + 1);
+      }, 5000);
+    }
+    
+    function stopAuto() {
+      if(interval) clearInterval(interval);
+    }
+
+    if (prev) {
+      prev.addEventListener("click", function(e) {
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+        startAuto();
+      });
+    }
+
+    if (next) {
+      next.addEventListener("click", function(e) {
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+        startAuto();
+      });
+    }
+
+    dots.forEach(function(dot) {
+      dot.addEventListener("click", function(e) {
+        e.preventDefault();
+        var idx = parseInt(this.getAttribute("data-index"), 10);
+        goToSlide(idx);
+        startAuto();
+      });
+    });
+
+    slider.addEventListener("mouseenter", stopAuto);
+    slider.addEventListener("mouseleave", startAuto);
+    startAuto();
   }
 
   // Search form
