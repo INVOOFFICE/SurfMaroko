@@ -24,6 +24,7 @@
   /* Aliases for backward compat */
   --brand:          var(--amber);
   --brand-hover:    var(--amber-deep);
+  --brand-dark:     #b45309;
   --brand2:         var(--sky);
   --brand3:         var(--teal);
   --muted:          var(--text-muted);
@@ -179,6 +180,9 @@ mark {
 }
 
 .nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: "Playfair Display", Georgia, serif;
   font-size: 22px;
   font-weight: 700;
@@ -189,7 +193,9 @@ mark {
   background-clip: text;
   letter-spacing: -0.02em;
   flex-shrink: 0;
+  transition: opacity var(--transition);
 }
+.nav__brand:hover { opacity: 0.85; }
 
 .nav__right { display: flex; gap: 6px; align-items: center; }
 
@@ -567,9 +573,9 @@ mark {
   text-decoration: none;
 }
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-glow);
-  border-color: rgba(56, 189, 248, 0.30);
+  border-color: rgba(56, 189, 248, 0.25);
 }
 .card--skeleton { pointer-events: none; }
 
@@ -775,7 +781,20 @@ mark {
   gap: 24px;
   flex-wrap: wrap;
 }
-.footer__text { color: var(--text-muted); font-size: 13px; margin: 4px 0 0; }
+.footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+  background: linear-gradient(120deg, var(--amber) 0%, var(--sky) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.footer__text { color: var(--text-muted); font-size: 13px; margin: 6px 0 0; }
 .footer__links { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
 .footer__links a { font-size: 13px; color: var(--text-muted); transition: color var(--transition); }
 .footer__links a:hover { color: var(--amber); }
@@ -866,7 +885,7 @@ mark {
 
 .article__hero  { padding: 0 36px 28px; }
 .article__media { margin: 0; border-radius: var(--radius); overflow: hidden; }
-.article__media img { width: 100%; height: 400px; object-fit: cover; }
+.article__media img { width: 100%; height: 420px; object-fit: cover; border-radius: var(--radius-md); }
 
 /* TOC */
 .article__toc {
@@ -1186,7 +1205,7 @@ mark {
 .surf-service__input:focus { border-color: var(--brand); }
 .surf-service__input--msg { resize: vertical; min-height: 80px; }
 .surf-service__btn {
-  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  background: linear-gradient(135deg, var(--amber) 0%, var(--amber-deep) 100%);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
@@ -1199,7 +1218,7 @@ mark {
   text-align: center;
 }
 .surf-service__btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.surf-service__btn:hover:not(:disabled) { opacity: 0.85; }
+.surf-service__btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
 .surf-service__msg {
   font-size: 13px;
   margin-top: -6px;
@@ -1228,7 +1247,7 @@ mark {
   .article__foot,
   .article__toc   { padding-inline: 20px; }
   .article__media img { height: 220px; }
-  .footer__inner  { flex-direction: column; }
+  .footer__inner  { flex-direction: column; align-items: flex-start; gap: 20px; }
   .hero           { padding-top: 44px; padding-bottom: 36px; }
 }
 
@@ -1239,6 +1258,36 @@ mark {
   .nl__input      { min-width: unset; }
 }
 
-.brand-logo { width: 36px; height: 36px; border-radius: 6px; box-shadow: 0 0 10px rgba(245, 158, 11, 0.45); flex-shrink: 0; }
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.40), 0 2px 6px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+  object-fit: contain;
+}
 
-.nav__brand { display: inline-flex !important; flex-direction: row !important; align-items: center !important; gap: 10px !important; }
+/* ═══════════════════════════════════════════════════════════
+   FOCUS & ACCESSIBILITY
+═══════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SELECTION COLOR
+═══════════════════════════════════════════════════════════ */
+::selection {
+  background: rgba(245, 158, 11, 0.25);
+  color: var(--text);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR (webkit)
+═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--amber); }
