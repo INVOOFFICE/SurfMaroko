@@ -2,7 +2,6 @@
   "site": {
     "name": "SurfMorocco",
     "description": "The Morocco surf blog — spots, seasons, beginner tips.",
-    "canonicalOrigin": "https://marocsurf.com",
     "topics": [
       "Spots",
       "Beginners",
@@ -11,7 +10,124 @@
       "Culture",
       "Techniques"
     ],
+    "canonicalOrigin": "",
     "defaultOgImage": "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&h=630&fit=crop&q=80"
   },
-  "articles": []
+  "articles": [
+    {
+      "id": "1",
+      "title": "Best Surf Spots in Morocco: The Ultimate 2025 Guide",
+      "seoTitle": "Best Surf Spots in Morocco 2025 | Complete Surf Guide",
+      "slug": "best-surf-spots-morocco-2025",
+      "category": "Destinations",
+      "image": "http://gosurfmorocco.com/uploads/gallery/big/821447097005.jpg",
+      "imageAlt": "Best Surf Spots in Morocco: The Ultimate 2025 Guide — MarocSurf",
+      "url": "https://surfagencymorocco.com/",
+      "sourceUrl": "https://surfagencymorocco.com/",
+      "publishedAt": "2026-04-19T22:41:02.325Z",
+      "summary": "A complete guide to Morocco's top surf breaks, from Taghazout's legendary point breaks to the raw Atlantic power of Essaouira.",
+      "description": "Morocco has quietly become one of the world's premier surf destinations. Stretching along the Atlantic coast, the country offers an extraordinary variety of waves — powerful beach breaks, long mellow points, and heavy reef slabs. Taghazout remains the crown jewel: a small fishing village north of Agadir that hosts waves like Anchor Point, Killer Point, and Hash Point. Each works best on different swells and tides, offering variety for surfers of all levels. Further north, Imsouane boasts the longest right-hand wave in Africa. Down south toward Mirleft, explorers find uncrowded gems. The surf season runs year-round, with the peak Atlantic swells arriving October through March.",
+      "intro": "A complete guide to Morocco's top surf breaks, from Taghazout's legendary point breaks to the raw Atlantic power of Essaouira.",
+      "dek": "A complete guide to Morocco's top surf breaks, from Taghazout's legendary point breaks to the raw Atlantic power of Essaouira.",
+      "whyItMatters": "Morocco is one of the most accessible surf destinations in Europe & Africa, combining quality waves with rich culture and affordability — attracting thousands of surf tourists annually.",
+      "bullets": [
+        "• Taghazout: world-class point breaks year-round\n • Imsouane: longest right in Africa (~800m)\n • Best season: Oct–Mar for consistent swells\n • Beginner-friendly spots: Banana Beach, Tamraght\n • No visa required for most EU/US citizens"
+      ],
+      "metaDescription": "Discover the best surf spots in Morocco for 2025. From Taghazout's world-class point breaks to Imsouane's record-long right-hander — your ultimate Morocco surf guide.",
+      "keywords": "surf Morocco, Morocco surf spots, Taghazout surfing, best waves Morocco, surf guide Morocco 2025",
+      "source": "MarocSurf"
+    },
+    {
+      "id": "2",
+      "title": "Taghazout Surf Village: Everything You Need to Know",
+      "seoTitle": "Taghazout Surf Guide 2025 | Waves, Camps & Tips",
+      "slug": "taghazout-surf-guide",
+      "category": "Destinations",
+      "image": "http://gosurfmorocco.com/uploads/gallery/big/671447097136.jpg",
+      "imageAlt": "Taghazout Surf Village: Everything You Need to Know — MarocSurf",
+      "url": "https://surfagencymorocco.com/",
+      "sourceUrl": "https://surfagencymorocco.com/",
+      "publishedAt": "2026-04-19T22:41:02.325Z",
+      "summary": "Taghazout has transformed from a hidden fishing village into Africa's most iconic surf destination. Here's the full insider breakdown.",
+      "description": "Taghazout sits 18 km north of Agadir along a dramatic stretch of Moroccan Atlantic coastline. Once known only to a handful of travelling surfers in the 1970s, it is today a globally recognised surf hub. The village itself remains small and atmospheric, with blue-painted walls, argan oil sellers, and the scent of tagine wafting from rooftop cafés. The surrounding coastline delivers multiple world-class breaks within a short stretch: Anchor Point is the flagship — a powerful right-hand point break that can hold swells up to 12 feet and produce rides of several hundred metres on a good day. Hash Point and Mysteries offer more mellow, beginner-friendly alternatives. Surf camps and schools have proliferated, making it easy to arrive solo and plug into an established community. The town is alcohol-free and conservatively dressed, a cultural contrast that many surfers find refreshing.",
+      "intro": "Taghazout has transformed from a hidden fishing village into Africa's most iconic surf destination. Here's the full insider breakdown.",
+      "dek": "Taghazout has transformed from a hidden fishing village into Africa's most iconic surf destination. Here's the full insider breakdown.",
+      "whyItMatters": "Taghazout is the reference point for surf tourism in Africa. Understanding it helps surfers plan trips and content creators generate high-traffic evergreen articles.",
+      "bullets": [
+        "• Anchor Point: best right-hander Oct–Apr\n • 5+ quality breaks within 3 km radius\n • Surf camps from €30/night with board rental\n • Alcohol-free village — respect local culture\n • Best swell direction: NW/WNW at 10–16 sec"
+      ],
+      "metaDescription": "Everything you need to know about surfing Taghazout, Morocco — the best breaks, where to stay, when to go, and cultural tips for the perfect trip.",
+      "keywords": "Taghazout surf, Taghazout Morocco, Anchor Point surf, surf camp Taghazout, Taghazout waves",
+      "source": "MarocSurf"
+    },
+    {
+      "id": "3",
+      "title": "Imsouane: How to Surf Africa's Longest Wave",
+      "seoTitle": "Imsouane Surf Guide | Africa's Longest Wave Explained",
+      "slug": "imsouane-surf-guide-africa-longest-wave",
+      "category": "Spots & Vagues",
+      "image": "http://gosurfmorocco.com/uploads/gallery/big/341447097257.jpg",
+      "imageAlt": "Imsouane: How to Surf Africa's Longest Wave — MarocSurf",
+      "url": "https://surfagencymorocco.com/",
+      "sourceUrl": "https://surfagencymorocco.com/",
+      "publishedAt": "2026-04-19T22:41:02.325Z",
+      "summary": "At nearly 800 metres long, Imsouane Bay's right-hander is the longest rideable wave on the African continent — a mellow paradise for longboarders and intermediates.",
+      "description": "Nestled inside a protected bay about 100 km north of Agadir, Imsouane is the wave that converted thousands of intermediate surfers into longboard devotees. The bay perfectly funnels north-west Atlantic swells into a long, peeling right-hander that can offer rides of 600–800 metres from take-off to kick-out. The wave is not powerful or hollow — it is smooth, consistent, and forgiving, which makes it extraordinary for progressing your technique, walking the nose, or simply enjoying a meditative glide. A shorter, punchier break called the Cathedral sits at the northern end of the bay and satisfies shortboarders looking for a more critical wave. The village of Imsouane itself is one of Morocco's most charming surf settlements — a cluster of painted concrete houses, fish restaurants, and small guesthouses perched above a working fishing port. Sunsets over the Atlantic from Imsouane's clifftops are among the most spectacular in the country.",
+      "intro": "At nearly 800 metres long, Imsouane Bay's right-hander is the longest rideable wave on the African continent — a mellow paradise for longboarders and intermediates.",
+      "dek": "At nearly 800 metres long, Imsouane Bay's right-hander is the longest rideable wave on the African continent — a mellow paradise for longboarders and intermediates.",
+      "whyItMatters": "Imsouane is a SEO goldmine — searches for 'longest wave Africa' and 'Imsouane surf' have grown 230% since 2022 as the spot gained mainstream coverage.",
+      "bullets": [
+        "• Right-hander up to 800m long — longest in Africa\n • Best for: intermediate, longboarders, SUP\n • Cathedral break for shortboarders\n • Works best Oct–Mar on NW swells\n • 1.5 hr drive from Agadir"
+      ],
+      "metaDescription": "Discover Imsouane, Morocco — home to Africa's longest rideable wave at nearly 800 metres. Full guide for intermediate surfers and longboarders.",
+      "keywords": "Imsouane surf, longest wave Africa, Imsouane Morocco, surf Imsouane longboard, Morocco longboard surf",
+      "source": "MarocSurf"
+    },
+    {
+      "id": "4",
+      "title": "Morocco Surf Season: Best Time to Visit in 2025",
+      "seoTitle": "Best Time to Surf Morocco 2025 | Month-by-Month Guide",
+      "slug": "best-time-surf-morocco-2025",
+      "category": "Conseils & Pratique",
+      "image": "http://gosurfmorocco.com/uploads/gallery/big/521447097292.jpg",
+      "imageAlt": "Morocco Surf Season: Best Time to Visit in 2025 — MarocSurf",
+      "url": "https://surfagencymorocco.com/",
+      "sourceUrl": "https://surfagencymorocco.com/",
+      "publishedAt": "2026-04-19T22:41:02.325Z",
+      "summary": "When is the best time to surf Morocco? A month-by-month breakdown of swells, crowds, temperatures, and what to expect across the year.",
+      "description": "Morocco's surf season never truly shuts down, but the character of the waves changes dramatically across the year. October through March is peak season: powerful north-west swells generated by North Atlantic storms march in at 12–20 second periods, lighting up point breaks like Anchor Point and Killer Point. Water temperatures drop to 16–18°C, requiring a 3/2mm wetsuit. This window brings the biggest, most consistent surf — but also the highest concentration of visiting surfers. April and May offer a sweet spot: residual Atlantic swell, lighter crowds, warming air temperatures (22–26°C), and uncrowded lineups. June through September sees the swell drop significantly; the region becomes dominated by trade winds that chop up the ocean surface, though Essaouira's consistent winds make it a kitesurfing paradise. For most surfers, the October–April window is the prime target.",
+      "intro": "When is the best time to surf Morocco? A month-by-month breakdown of swells, crowds, temperatures, and what to expect across the year.",
+      "dek": "When is the best time to surf Morocco? A month-by-month breakdown of swells, crowds, temperatures, and what to expect across the year.",
+      "whyItMatters": "Season-based content drives evergreen organic traffic year-round, capturing searches from trip-planners in every month of the year.",
+      "bullets": [
+        "• Peak swell: Oct–Mar (NW Atlantic swells)\n • Sweet spot: Apr–May (less crowd, warm air)\n • Summer: ideal for kite/windsurf, small surf\n • Water temp range: 16°C (Jan) → 22°C (Aug)\n • Wetsuit needed: 3/2mm Oct–Apr"
+      ],
+      "metaDescription": "Find out the best time to surf Morocco in 2025. Our month-by-month guide covers swell forecasts, water temperatures, crowd levels, and what to pack.",
+      "keywords": "best time surf Morocco, Morocco surf season, when to go surf Morocco, Morocco waves by month, surf Morocco winter",
+      "source": "MarocSurf"
+    },
+    {
+      "id": "5",
+      "title": "Learn to Surf in Morocco: Top Schools & Camps for Beginners",
+      "seoTitle": "Best Surf Schools & Camps in Morocco for Beginners 2025",
+      "slug": "surf-schools-camps-morocco-beginners",
+      "category": "Surf Camps & Écoles",
+      "image": "http://gosurfmorocco.com/uploads/gallery/big/191447097330.jpg",
+      "imageAlt": "Learn to Surf in Morocco: Top Schools & Camps for Beginners — MarocSurf",
+      "url": "https://surfagencymorocco.com/",
+      "sourceUrl": "https://surfagencymorocco.com/",
+      "publishedAt": "2026-04-19T22:41:02.325Z",
+      "summary": "Morocco is one of the world's best destinations for beginner surfers — warm hospitality, mellow beach breaks, and affordable surf schools make learning easy.",
+      "description": "For surfers taking their first steps on a board, Morocco offers an ideal environment. The beach breaks around Tamraght, Banana Beach, and Agadir are wide, sandy, and forgiving — perfect for white-water rides and progressing to green unbroken waves. A cluster of professional surf schools has grown up around Taghazout over the past decade, offering structured 5-day and 7-day learn-to-surf courses that include theory sessions, video analysis, and guided coaching in the water. Prices are remarkably affordable by European standards: a full week including accommodation, meals, daily lessons, and board hire typically runs €350–€600. Many schools are ISA (International Surfing Association) certified and employ multilingual instructors. Beyond the waves, camps organise yoga sessions, cultural excursions to Agadir souk, argan oil cooperatives, and Saharan day trips — making the experience about more than just surfing.",
+      "intro": "Morocco is one of the world's best destinations for beginner surfers — warm hospitality, mellow beach breaks, and affordable surf schools make learning easy.",
+      "dek": "Morocco is one of the world's best destinations for beginner surfers — warm hospitality, mellow beach breaks, and affordable surf schools make learning easy.",
+      "whyItMatters": "Surf tourism in Morocco generates over $300M annually. Beginners represent the fastest-growing segment — content targeting this audience drives high conversion affiliate traffic.",
+      "bullets": [
+        "• Best beginner beaches: Tamraght, Banana Beach\n • ISA-certified schools with English/French instructors\n • 7-day all-inclusive camp: ~€400–€600\n • Board hire: €10–15/day independently\n • Yoga, culture, Sahara excursions often included"
+      ],
+      "metaDescription": "Want to learn to surf in Morocco? Discover the best surf schools and camps near Taghazout — affordable, professional, and unforgettable for complete beginners.",
+      "keywords": "surf school Morocco, learn to surf Morocco, beginner surf Morocco, surf camp Morocco, Morocco surf lessons",
+      "source": "MarocSurf"
+    }
+  ]
 }
