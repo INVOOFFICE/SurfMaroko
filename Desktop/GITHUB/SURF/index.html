@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-language" content="en" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#020d18" />
+
+    <!-- AdSense (optional) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX" />
+
+    <link rel="preload" href="surf-news.json" as="fetch" type="application/json" crossorigin="anonymous" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MoroccoSurf" />
+    <link rel="stylesheet" href="style.css" />
+
+    <title>MoroccoSurf — Surfing in Morocco: Spots, Tips & Sessions</title>
+    <meta name="description" content="The definitive Moroccan surf blog: best spots (Taghazout, Anchor Point, Essaouira...), ideal seasons, and tips for beginners. All the Moroccan surf news." />
+    <link rel="canonical" href="" id="canonical-link" />
+
+    <meta property="og:title" content="MoroccoSurf — Surfing in Morocco: Spots, Tips & Sessions" />
+    <meta property="og:description" content="The definitive Moroccan surf blog: best spots, seasons, beginner tips, and surf news." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" id="og-url" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&h=630&fit=crop&q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MoroccoSurf — Surfing in Morocco" />
+    <meta name="twitter:description" content="Spots, seasons, beginner tips — the best of Moroccan surfing." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&h=630&fit=crop&q=80" />
+
+    <script type="application/ld+json" id="site-schema">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "#organization",
+          "name": "MoroccoSurf",
+          "url": ""
+        },
+        {
+          "@type": "WebSite",
+          "@id": "#website",
+          "url": "",
+          "name": "MoroccoSurf",
+          "inLanguage": "en",
+          "publisher": { "@id": "#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "index.html?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="nav__brand" href="index.html" data-site-name>🌊 MoroccoSurf</a>
+        <div class="nav__right">
+          <a class="nav__link" href="contact.html">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero__inner">
+          <span class="hero__eyebrow">🏄 Morocco Surf Blog</span>
+          <h1 class="hero__title" id="hero-title">Surf the Waves of Morocco</h1>
+          <p class="hero__sub">
+            Legendary spots, ideal seasons, and beginner tips — everything you need to know about surfing in Morocco.
+          </p>
+
+          <!-- Surf Conditions Widget -->
+          <div class="surf-widget" id="surf-widget" aria-live="polite">
+            <div class="surf-widget__header">
+              <span class="surf-widget__icon">🌊</span>
+              <h3>Live Surf Conditions</h3>
+            </div>
+            <div id="surf-widget-content" class="surf-widget__content">
+              Loading conditions...
+            </div>
+          </div>
+
+          <div class="hero__featured" id="hero-featured" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="container section" aria-labelledby="latest-heading">
+        <div class="section__filters">
+          <form class="search" id="search-form" role="search" aria-label="Search surf articles">
+            <input
+              class="search__input"
+              id="search-input"
+              name="q"
+              type="search"
+              inputmode="search"
+              autocomplete="off"
+              placeholder="Search (e.g., Taghazout, beginner, winter...)"
+            />
+            <button class="search__btn" type="submit">Search</button>
+          </form>
+          <div class="pillbar" id="category-pills" role="group" aria-label="Categories"></div>
+        </div>
+        <div class="section__head">
+          <h2 id="latest-heading">Latest Articles</h2>
+          <p class="section__meta" id="latest-meta"></p>
+        </div>
+        <div class="grid" id="article-grid" aria-live="polite"></div>
+        <div class="pager" id="pager" hidden>
+          <button class="pager__btn" id="pager-prev" type="button">← Previous</button>
+          <span class="pager__label" id="pager-label"></span>
+          <button class="pager__btn" id="pager-next" type="button">Next →</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Newsletter -->
+    <section class="nl container" aria-labelledby="nl-title">
+      <div class="nl__card">
+        <div>
+          <p class="nl__badge">Newsletter</p>
+          <h2 class="nl__title" id="nl-title">Don't miss a single wave 🌊</h2>
+          <p class="nl__sub">The best spots, sessions, and surf tips in Morocco — directly in your inbox.</p>
+          <p class="nl__msg" id="nl-msg-home" aria-live="polite"></p>
+        </div>
+        <div>
+          <form class="nl__form" id="nl-form-home" novalidate>
+            <input class="nl__input" id="nl-email-home" type="email" placeholder="your@email.com" autocomplete="email" required />
+            <button class="nl__btn" type="submit" id="nl-btn-home">Subscribe for free</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div>
+          <strong data-site-name>🌊 MoroccoSurf</strong>
+          <p class="footer__text">Surfing in Morocco, authentically.</p>
+        </div>
+        <div class="footer__links">
+          <a href="terms-of-use.html">Terms of Use</a>
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <button id="scroll-top" type="button" aria-label="Back to top">↑</button>
+
+    <script src="main.js" defer></script>
+
+    <script>
+    (function(){
+      var WA_NL_ENDPOINT = "VOTRE_WEB_APP_URL"; // ← Replace with your Google Apps Script Web App URL
+      function nlSubmit(formId, emailId, btnId, msgId) {
+        var form = document.getElementById(formId);
+        var emailEl = document.getElementById(emailId);
+        var btn = document.getElementById(btnId);
+        var msg = document.getElementById(msgId);
+        if (!form) return;
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
+          var email = (emailEl ? emailEl.value : "").trim();
+          if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+            msg.textContent = "Please enter a valid email address.";
+            msg.className = "nl__msg nl__msg--err";
+            return;
+          }
+          btn.disabled = true;
+          btn.textContent = "Sending...";
+          msg.textContent = "Just a moment...";
+          msg.className = "nl__msg nl__msg--wait";
+          fetch(WA_NL_ENDPOINT + "?action=subscribe&email=" + encodeURIComponent(email))
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+              if (data.status === "ok" || data.status === "exists") {
+                msg.textContent = data.status === "exists" ? "Already subscribed — thank you!" : "🎉 Welcome! Please check your inbox.";
+                msg.className = "nl__msg nl__msg--ok";
+                if (emailEl) emailEl.value = "";
+                btn.textContent = "✓ Subscribed!";
+              } else { throw new Error(data.message || "Error"); }
+            })
+            .catch(function(){
+              msg.textContent = "An error occurred. Please try again.";
+              msg.className = "nl__msg nl__msg--err";
+              btn.disabled = false;
+              btn.textContent = "Subscribe for free";
+            });
+        });
+      }
+      nlSubmit("nl-form-home", "nl-email-home", "nl-btn-home", "nl-msg-home");
+    })();
+
+    // Set canonical dynamically
+    (function(){
+      var canon = window.location.href.split("?")[0];
+      var cl = document.getElementById("canonical-link");
+      var og = document.getElementById("og-url");
+      if (cl) cl.href = canon;
+      if (og) og.content = canon;
+    })();
+    </script>
+  </body>
+</html>

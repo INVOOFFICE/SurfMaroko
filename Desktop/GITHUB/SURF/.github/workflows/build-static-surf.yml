@@ -1,0 +1,62 @@
+name: Build static surf pages
+
+on:
+  push:
+    paths:
+      - 'news.json'
+  workflow_dispatch:
+
+concurrency:
+  group: build-static-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build article pages
+        run: node scripts/build-surf-pages.mjs
+
+      - name: Commit and push generated pages
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add articles/ news-latest.json sitemap.xml feed.xml news.json robots.txt
+
+          if git diff --cached --quiet; then
+            echo "✅ Nothing to commit, skipping push."
+            exit 0
+          fi
+
+          git commit -m "chore: rebuild surf pages [skip ci]"
+
+          MAX=5
+          COUNT=0
+          until git push origin main; do
+            COUNT=$((COUNT + 1))
+            if [ "$COUNT" -ge "$MAX" ]; then
+              echo "❌ Push failed after $MAX attempts."
+              exit 1
+            fi
+            echo "⚠️  Push rejected (attempt $COUNT/$MAX), pulling and rebasing…"
+            git fetch origin main
+            git rebase -X theirs origin/main
+          done
+
+          echo "✅ Surf pages pushed successfully."
