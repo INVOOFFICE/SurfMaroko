@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.SURFMAROKO }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
