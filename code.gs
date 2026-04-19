@@ -441,7 +441,7 @@ function surf_publishDailyBatch() {
   var newsJson = surf_buildNewsJson_(allArticles);
 
   // Pousser vers GitHub
-  var commitMsg = 'chore: publish ' + batch.length + ' surf articles [skip ci]';
+  var commitMsg = 'chore: publish ' + batch.length + ' surf articles';
   var success = surf_pushToGithub_(newsJson, SURF_CONFIG.GITHUB_NEWS_JSON_PATH, commitMsg);
 
   if (success) {
@@ -488,7 +488,7 @@ function surf_publishAll() {
   });
 
   var newsJson = surf_buildNewsJson_(newArticles);
-  var commitMsg = 'chore: publish all ' + drafts.length + ' surf articles [skip ci]';
+  var commitMsg = 'chore: publish all ' + drafts.length + ' surf articles';
   var success = surf_pushToGithub_(newsJson, SURF_CONFIG.GITHUB_NEWS_JSON_PATH, commitMsg);
 
   if (success) {
