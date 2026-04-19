@@ -365,7 +365,7 @@ function main() {
 
   // surf-news-latest.json (last 20 articles for fast load)
   const latestJson = { site: { ...site }, articles: normalized.slice(0, 20) };
-  writeFile(path.join(ROOT, "surf-news-latest.json"), JSON.stringify(latestJson, null, 2) + "\n");
+  writeFile(path.join(ROOT, "surf-news-latest.json"), JSON.stringify(latestJson, null, 2) + "\n"); // ✅ nom cohérent avec main.js
 
   // Rewrite surf-news.json (structured)
   writeFile(NEWS_JSON, JSON.stringify({ site, articles: normalized }, null, 2) + "\n");
