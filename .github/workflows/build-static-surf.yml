@@ -1,7 +1,6 @@
 name: Build static surf pages
 
 on:
-  # ✅ SOLUTION : écouter surf-news.json mais seulement sur push humain (pas bot)
   push:
     branches:
       - main
@@ -9,26 +8,19 @@ on:
       - 'surf-news.json'
   workflow_dispatch:
 
-# ❌ ANCIENNE CAUSE DU BUG :
-# Le bot commitait avec [skip ci] → GitHub bloquait tous les triggers
-# NOUVELLE RÈGLE : on supprime [skip ci] du commit message du bot
-
 concurrency:
   group: build-static-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    # ✅ BLOQUER les commits du bot pour éviter la boucle infinie
-    # Si le commit vient du bot lui-même, on skip le job
-    if: |
-      github.actor != 'github-actions[bot]' ||
-      github.event_name == 'workflow_dispatch'
+    if: github.actor != 'github-actions[bot]'
 
     steps:
       - name: Checkout repository
@@ -36,6 +28,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -53,12 +46,10 @@ jobs:
           git add articles/ surf-news-latest.json sitemap.xml feed.xml surf-news.json robots.txt
 
           if git diff --cached --quiet; then
-            echo "✅ Nothing to commit, skipping push."
+            echo "✅ Nothing to commit — pages already up to date."
             exit 0
           fi
 
-          # ✅ CORRECTION CLÉ : supprimer [skip ci] du message de commit
-          # [skip ci] bloquait le déclenchement de pages-build-deployment
           git commit -m "chore: rebuild surf pages"
 
           MAX=5
@@ -69,9 +60,9 @@ jobs:
               echo "❌ Push failed after $MAX attempts."
               exit 1
             fi
-            echo "⚠️  Push rejected (attempt $COUNT/$MAX), pulling and rebasing…"
+            echo "⚠️  Push rejected (attempt $COUNT/$MAX), rebasing…"
             git fetch origin main
             git rebase -X theirs origin/main
           done
 
-          echo "✅ Surf pages pushed successfully."
+          echo "✅ Done — pages-build-deployment will now trigger automatically."
