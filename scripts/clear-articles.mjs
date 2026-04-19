@@ -6,7 +6,7 @@ const LATEST_PATH = './surf-news-latest.json';
 
 const emptyDB = {
   site: {
-    name: "MoroccoSurf",
+    name: "SurfMorocco",
     description: "The Morocco surf blog — spots, seasons, beginner tips.",
     canonicalOrigin: "https://marocsurf.com",
     topics: ["Spots", "Beginners", "Seasons", "Gear", "Culture", "Techniques"],

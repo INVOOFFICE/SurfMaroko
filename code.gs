@@ -43,7 +43,7 @@ var SURF_CONFIG = {
   ],
 
   SITE: {
-    name: 'MoroccoSurf',
+    name: 'SurfMorocco',
     description: 'The Morocco surf blog — spots, seasons, beginner tips.',
     topics: ['Spots', 'Beginners', 'Seasons', 'Gear', 'Culture', 'Techniques'],
     // canonicalOrigin sera remplacé par SURF_SITE_ORIGIN depuis les Properties
@@ -591,7 +591,7 @@ function doPost(e) {
 
 // Simple fallback for accidental GET requests
 function doGet(e) {
-  return ContentService.createTextOutput("MoroccoSurf Service Webhook is active. Use POST to submit requests.");
+  return ContentService.createTextOutput("SurfMorocco Service Webhook is active. Use POST to submit requests.");
 }
 
 // ── TRIGGERS ──────────────────────────────────────────────────────────────────
