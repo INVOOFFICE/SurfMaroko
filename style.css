@@ -1241,3 +1241,4 @@ mark {
    w i d t h :   2 4 p x ;   h e i g h t :   2 4 p x ;   m a r g i n - r i g h t :   8 p x ;   v e r t i c a l - a l i g n :   m i d d l e ;   b o r d e r - r a d i u s :   4 p x ;   b o x - s h a d o w :   0   0   8 p x    
  r g b a ( 2 4 5 ,   1 5 8 ,   1 1 ,   0 . 4 ) ;    
  
+.brand-logo { width: 24px; height: 24px; margin-right: 8px; vertical-align: middle; border-radius: 4px; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
