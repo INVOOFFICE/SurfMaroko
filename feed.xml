@@ -2,50 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>SurfMorocco</title>
-  <link></link>
+  <link>https://marocsurf.com/</link>
   <description>The Morocco surf blog — spots, seasons, beginner tips.</description>
   <language>fr</language>
-  <lastBuildDate>Sun, 19 Apr 2026 22:50:41 GMT</lastBuildDate>
-  <atom:link href="" rel="self" type="application/rss+xml"/>
-  <item>
-    <title>Best Surf Spots in Morocco: The Ultimate 2025 Guide</title>
-    <link></link>
-    <description>Discover the best surf spots in Morocco for 2025. From Taghazout&apos;s world-class point breaks to Imsouane&apos;s record-long right-hander — your ultimate Morocco surf guide.</description>
-    <pubDate>Sun, 19 Apr 2026 22:41:02 GMT</pubDate>
-    <guid isPermaLink="true"></guid>
-    <category>Destinations</category>
-  </item>
-  <item>
-    <title>Taghazout Surf Village: Everything You Need to Know</title>
-    <link></link>
-    <description>Everything you need to know about surfing Taghazout, Morocco — the best breaks, where to stay, when to go, and cultural tips for the perfect trip.</description>
-    <pubDate>Sun, 19 Apr 2026 22:41:02 GMT</pubDate>
-    <guid isPermaLink="true"></guid>
-    <category>Destinations</category>
-  </item>
-  <item>
-    <title>Imsouane: How to Surf Africa&apos;s Longest Wave</title>
-    <link></link>
-    <description>Discover Imsouane, Morocco — home to Africa&apos;s longest rideable wave at nearly 800 metres. Full guide for intermediate surfers and longboarders.</description>
-    <pubDate>Sun, 19 Apr 2026 22:41:02 GMT</pubDate>
-    <guid isPermaLink="true"></guid>
-    <category>Spots &amp; Vagues</category>
-  </item>
-  <item>
-    <title>Morocco Surf Season: Best Time to Visit in 2025</title>
-    <link></link>
-    <description>Find out the best time to surf Morocco in 2025. Our month-by-month guide covers swell forecasts, water temperatures, crowd levels, and what to pack.</description>
-    <pubDate>Sun, 19 Apr 2026 22:41:02 GMT</pubDate>
-    <guid isPermaLink="true"></guid>
-    <category>Conseils &amp; Pratique</category>
-  </item>
-  <item>
-    <title>Learn to Surf in Morocco: Top Schools &amp; Camps for Beginners</title>
-    <link></link>
-    <description>Want to learn to surf in Morocco? Discover the best surf schools and camps near Taghazout — affordable, professional, and unforgettable for complete beginners.</description>
-    <pubDate>Sun, 19 Apr 2026 22:41:02 GMT</pubDate>
-    <guid isPermaLink="true"></guid>
-    <category>Surf Camps &amp; Écoles</category>
-  </item>
+  <lastBuildDate>Thu, 23 Apr 2026 21:20:33 GMT</lastBuildDate>
+  <atom:link href="https://marocsurf.com/feed.xml" rel="self" type="application/rss+xml"/>
+
 </channel>
 </rss>
