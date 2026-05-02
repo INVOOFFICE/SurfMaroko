@@ -1,2 +1,0 @@
-cd "C:\Users\M2B PRO\Desktop\GITHUB\maghrib"
-python -m http.server 8000
