@@ -1,0 +1,614 @@
+═══════════════════════════════════════════════════════════════════════════════
+  AUDIT CORRECTIONS — INVOOFFICE PWA OFFLINE
+  Date : 2026-04-04
+  Référence : audit_rapport.txt (problèmes P1 → P39)
+═══════════════════════════════════════════════════════════════════════════════
+
+Chaque correction indique : fichier, problème référencé, et le code exact à
+modifier. Les corrections sont ordonnées par priorité (Important → Moyen → Mineur).
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 1 — [P31] price-mode.js absent de PRECACHE_ASSETS
+  Fichier : sw.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : js/price-mode.js est chargé dans index.html mais absent de la
+liste PRECACHE_ASSETS. Si l'utilisateur ouvre l'app hors-ligne la première
+fois, ce script sera manquant et les recalculs HT/TTC échoueront silencieusement.
+
+AVANT (sw.js, ligne 67-69) :
+──────────────────────────────
+  './js/invoices.js',
+  './js/docs.js',
+  './js/fournisseurs.js',
+
+APRÈS :
+──────────────────────────────
+  './js/invoices.js',
+  './js/price-mode.js',
+  './js/docs.js',
+  './js/fournisseurs.js',
+
+NOTE : Après cette modification, incrementer CACHE_NAME (ex. invo-v10 → invo-v11)
+pour forcer le rechargement du précache sur les navigateurs existants.
+
+CACHE_NAME à modifier (sw.js, ligne 7) :
+  AVANT  : const CACHE_NAME = 'invo-v10';
+  APRÈS  : const CACHE_NAME = 'invo-v11';
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 2 — [P34] Toast sans aria-live (accessibilité)
+  Fichier : index.html
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Le conteneur #toast n'a pas de rôle aria-live. Les notifications
+(succès, erreurs) ne sont pas annoncées aux lecteurs d'écran.
+
+Chercher dans index.html l'élément avec id="toast" et ajouter les attributs :
+
+AVANT :
+  <div id="toast"></div>
+  (ou similaire selon l'emplacement exact dans le HTML)
+
+APRÈS :
+  <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+Si le toast affiche des erreurs critiques (type "err"), utiliser assertive :
+  Pour les toasts d'erreur uniquement, mettre aria-live="assertive".
+  La solution la plus simple est d'utiliser "polite" globalement et de laisser
+  les toasts d'erreur se lire après l'action en cours.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 3 — [P33] Sidebar sans aria-label explicite
+  Fichier : index.html
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : La navigation latérale n'a pas de aria-label, les screen readers
+annoncent "Navigation" générique.
+
+Chercher l'élément <nav> ou <aside id="sidebar"> dans index.html :
+
+AVANT :
+  <nav id="sidebar"> ... </nav>
+  (ou <aside id="sidebar"> ... </aside>)
+
+APRÈS :
+  <nav id="sidebar" aria-label="Navigation principale"> ... </nav>
+
+Si c'est un <aside> :
+  <aside id="sidebar" aria-label="Menu de navigation"> ... </aside>
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 4 — [P5] manifest.json — id instable
+  Fichier : manifest.json
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : id: "./index.html" est lié au chemin du fichier. Si l'app change
+de sous-dossier de déploiement, l'identité PWA change et l'installation est
+perdue côté utilisateur.
+
+AVANT (manifest.json, ligne 2) :
+  "id": "./index.html",
+
+APRÈS :
+  "id": "/",
+
+NOTE : Si l'app est déployée dans un sous-dossier (ex. /invo/), utiliser
+  "id": "/invo/"
+afin que l'id reste stable quel que soit le nom du fichier d'entrée.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 5 — [P6] manifest.json — Shortcuts manquants
+  Fichier : manifest.json
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Pas de raccourcis (shortcuts) dans le manifest. Sur Android/Chrome,
+les raccourcis permettent d'accéder directement à "Nouvelle facture" depuis
+l'icône de l'app (appui long).
+
+AJOUTER dans manifest.json, après le champ "categories" :
+
+  "shortcuts": [
+    {
+      "name": "Nouvelle facture",
+      "short_name": "Facture",
+      "description": "Créer une nouvelle facture",
+      "url": "./index.html#generate",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Historique",
+      "short_name": "Historique",
+      "description": "Voir l'historique des documents",
+      "url": "./index.html#history",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+
+NOTE : Les URLs #generate et #history doivent correspondre aux ancres/routes
+utilisées par nav() dans ui.js pour que le déeplink fonctionne.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 6 — [P8] manifest.json — Icône SVG manquante
+  Fichier : manifest.json
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : icon.svg existe à la racine et est utilisé comme favicon HTML,
+mais il n'est pas déclaré dans le manifest. Les navigateurs modernes
+préfèrent SVG pour les icônes PWA (rendu net toutes résolutions).
+
+AJOUTER dans le tableau "icons" de manifest.json, en première position :
+
+  {
+    "src": "icon.svg",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "any"
+  },
+
+AVANT (tableau "icons") :
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      ...
+    },
+
+APRÈS :
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      ...
+    },
+
+AUSSI : Ajouter icon.svg dans PRECACHE_ASSETS de sw.js s'il n'y est pas.
+  Vérification : './icon.svg' est déjà présent à la ligne 17 de sw.js. OK.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 7 — [P28] assets/fonts/index.css absent du précache
+  Fichier : sw.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : css/fonts-plus-jakarta.css importe probablement
+assets/fonts/plus-jakarta-sans/index.css qui contient des déclarations
+@font-face supplémentaires. Ce fichier n'est pas dans PRECACHE_ASSETS.
+
+VÉRIFIER d'abord le contenu de css/fonts-plus-jakarta.css pour confirmer
+la présence d'un @import vers assets/fonts/plus-jakarta-sans/index.css.
+
+Si l'import existe, AJOUTER dans PRECACHE_ASSETS de sw.js après les fonts :
+
+AVANT :
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2',
+  './js/vendor/purify.min.js',
+
+APRÈS :
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/index.css',
+  './js/vendor/purify.min.js',
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 8 — [P21] Session lock sans avertissement "pas de mot de passe"
+  Fichier : js/auth.js (à localiser dans le fichier)
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Si l'utilisateur n'a pas configuré de mot de passe, la session
+lock s'active mais se déverrouille automatiquement sans aucun avertissement.
+L'utilisateur croit que son app est protégée alors qu'elle ne l'est pas.
+
+RECHERCHER dans auth.js la section qui gère l'absence de mot de passe
+(probablement dans la fonction qui vérifie l'activation ou affiche les
+paramètres de session lock).
+
+AJOUTER un indicateur visuel dans les paramètres (settings) :
+
+Dans la page paramètres (page-templates.js ou la section settings),
+ajouter une alerte conditionnelle :
+
+  <!-- À ajouter dans la section Sécurité des paramètres -->
+  <div id="no-password-warning" class="alert alert-warning" style="display:none">
+    <strong>Aucun mot de passe configuré</strong> — Votre application n'est pas
+    protégée par un code PIN. Configurez un mot de passe de session pour sécuriser
+    l'accès à vos données.
+  </div>
+
+Et dans le JS correspondant (settings init) :
+  // Afficher l'avertissement si pas de mot de passe configuré
+  const hasPassword = /* lecture depuis OPFS activation data */;
+  const warning = document.getElementById('no-password-warning');
+  if (warning) warning.style.display = hasPassword ? 'none' : 'block';
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 9 — [P24] Avertissement si OPFS indisponible
+  Fichier : js/storage.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Si OPFS échoue (iOS < 16.4, navigateur ancien), le fallback
+localStorage est utilisé silencieusement. L'utilisateur ne sait pas que
+son stockage est limité à ~5 MB et non isolé.
+
+LOCALISER dans storage.js la fonction initOPFS() ou preloadOPFS().
+
+AJOUTER après la détection de l'échec OPFS (là où le fallback localStorage
+est activé) :
+
+  // Avertissement si OPFS non disponible — localStorage fallback activé
+  function _warnOPFSUnavailable() {
+    if (typeof toast === 'function') {
+      toast(
+        'Stockage avancé (OPFS) non disponible. Données stockées localement ' +
+        '(limite ~5 MB). Mettez à jour votre navigateur pour une meilleure expérience.',
+        'warn'
+      );
+    }
+    console.warn('[storage] OPFS indisponible — fallback localStorage activé.');
+  }
+
+Appeler _warnOPFSUnavailable() lors du premier démarrage si OPFS échoue.
+Pour éviter de montrer l'avertissement à chaque démarrage, utiliser :
+  if (!localStorage.getItem('invoo_opfs_warn_shown')) {
+    _warnOPFSUnavailable();
+    localStorage.setItem('invoo_opfs_warn_shown', '1');
+  }
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 10 — [P37] page-templates.js — Marqueur "NE PAS MODIFIER"
+  Fichier : scripts/build-page-templates.mjs (générateur)
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : page-templates.js est généré automatiquement mais aucun en-tête
+n'indique qu'il ne faut pas le modifier manuellement. Les modifications
+directes sont écrasées à la prochaine exécution du script.
+
+DANS scripts/build-page-templates.mjs, localiser l'endroit où l'en-tête
+du fichier généré est écrit. MODIFIER le header généré pour inclure :
+
+AVANT (exemple probable) :
+  const header = `// page-templates.js — généré automatiquement\n`;
+
+APRÈS :
+  const header = [
+    '// ╔══════════════════════════════════════════════════╗',
+    '// ║  FICHIER GÉNÉRÉ — NE PAS MODIFIER MANUELLEMENT   ║',
+    '// ║  Source : scripts/build-page-templates.mjs        ║',
+    '// ║  Régénérer : node scripts/build-page-templates.mjs║',
+    '// ╚══════════════════════════════════════════════════╝',
+    '// Généré le : ' + new Date().toISOString(),
+    '',
+  ].join('\n');
+
+Cela empêche les modifications accidentelles et documente le processus de
+régénération pour les futurs développeurs.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 11 — [P25] apple-touch-icon taille incorrecte
+  Fichier : index.html
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : apple-touch-icon pointe vers icon-512.png (512×512). Apple
+recommande 180×180px. Le navigateur redimensionne mais la qualité est
+meilleure avec la taille native.
+
+Option A (simple — utiliser icon-192.png qui est plus proche) :
+
+AVANT (index.html, ligne 31) :
+  <link rel="apple-touch-icon" href="icons/icon-512.png">
+
+APRÈS :
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+Option B (recommandé — créer une icône 180×180) :
+  1. Créer icons/icon-apple-touch-180.png (180×180px)
+  2. Modifier index.html :
+     <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-apple-touch-180.png">
+  3. Ajouter dans PRECACHE_ASSETS de sw.js :
+     './icons/icon-apple-touch-180.png',
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 12 — [P15] Spinner de chargement initial
+  Fichier : index.html + css/pages/auth.css (ou style.css)
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Sur mobile lent, il peut s'écouler 2-3 secondes entre le
+chargement de index.html et l'affichage de l'écran auth (pendant que tous
+les scripts défèrent s'exécutent). L'utilisateur voit une page blanche.
+
+AJOUTER dans index.html, juste après <body> et avant <noscript> :
+
+  <!-- Spinner de chargement initial — retiré par app.js au boot -->
+  <div id="boot-spinner" aria-hidden="true" style="
+    position:fixed;inset:0;z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+    background:#0f1923;flex-direction:column;gap:16px;
+  ">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+         style="animation:bootSpin 1s linear infinite" aria-hidden="true">
+      <circle cx="24" cy="24" r="20" stroke="rgba(9,188,138,0.2)" stroke-width="4"/>
+      <path d="M24 4a20 20 0 0 1 20 20" stroke="#09BC8A" stroke-width="4"
+            stroke-linecap="round"/>
+    </svg>
+    <div style="color:#94a8be;font-size:13px;font-family:system-ui,sans-serif">
+      Chargement…
+    </div>
+  </div>
+  <style>
+    @keyframes bootSpin { to { transform: rotate(360deg); } }
+  </style>
+
+AJOUTER dans js/app.js, au début de la chaîne de boot :
+
+  // Retirer le spinner de boot dès que l'app est prête
+  function _removeBootSpinner() {
+    const el = document.getElementById('boot-spinner');
+    if (el) {
+      el.style.transition = 'opacity 0.2s';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 200);
+    }
+  }
+
+  preloadOPFS()
+    .then(() => checkAuth())
+    .catch(() => checkAuth())
+    .finally(() => _removeBootSpinner());   // ← AJOUTER cette ligne
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 13 — [P1] sw.js dans PRECACHE_ASSETS (inutile)
+  Fichier : sw.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Le Service Worker ne peut pas se pré-cacher lui-même de manière
+utile — le navigateur gère son propre cycle de mise à jour indépendamment
+du cache. Cette entrée occupe une requête réseau au install pour rien.
+
+AVANT (sw.js, ligne 16) :
+  './sw.js',
+
+APRÈS :
+  // './sw.js',  ← retiré : le SW est géré par le navigateur, pas par le cache
+
+Supprimer simplement la ligne './sw.js', de PRECACHE_ASSETS.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 14 — [P30] Fichiers vides parasites à la racine
+  Action : suppression manuelle
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Des fichiers vides nommés "cd", "git", "main" existent à la racine
+du projet. Ce sont probablement des artifacts d'une commande git mal saisie
+(ex. "git main" au lieu de "git checkout main"). Ils polluent la racine.
+
+SUPPRIMER ces fichiers :
+  - Vérifier qu'ils sont bien vides : cat cd && cat git && cat main
+  - Si vides : rm cd git main
+  - S'assurer que sw.js ne les précache pas (ils ne sont pas dans PRECACHE_ASSETS)
+
+NOTE : Ne pas supprimer si ces fichiers ont un contenu inattendu — inspecter
+       d'abord avec un éditeur.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 15 — [P23] Ajouter npm audit à la checklist de release
+  Fichier : README.md
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : La checklist de release dans README.md ne mentionne pas npm audit.
+Des vulnérabilités dans les dépendances (notamment xlsx 0.18.5) peuvent
+passer inaperçues.
+
+LOCALISER la section checklist dans README.md et AJOUTER :
+
+  [ ] npm audit --production  (vérifier les CVE sur les dépendances runtime)
+
+Aussi AJOUTER dans package.json, dans les scripts :
+
+  AVANT :
+    "scripts": {
+      "lint": "eslint ...",
+      ...
+    }
+
+  APRÈS :
+    "scripts": {
+      "lint": "eslint ...",
+      "audit": "npm audit --production",
+      ...
+    }
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 16 — [P16] Réduire les poids de fonts pré-cachés
+  Fichier : sw.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : 6 poids WOFF2 sont pré-cachés (300 à 800). Les poids 300 (light)
+et 800 (extra-bold) sont peu utilisés dans une app de facturation. Économie
+possible ~40-60 KB au précache.
+
+VÉRIFICATION PRÉALABLE : Chercher dans les fichiers CSS les usages de
+font-weight: 300 et font-weight: 800. Si aucun usage trouvé, les retirer.
+
+AVANT (sw.js, lignes 38-43) :
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-300-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2',
+
+APRÈS (si 300 et 800 non utilisés) :
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2',
+  './assets/fonts/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2',
+
+NOTE : Vérifier aussi css/fonts-plus-jakarta.css pour supprimer les
+@font-face correspondants aux poids retirés.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 17 — [P19] Documentation du SECRET hardcodé
+  Fichier : js/license-activation.js + docs/
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : Le SECRET 'INVOO3388' est hardcodé dans le JS livré au navigateur.
+Pour une PWA 100 % locale et usage personnel, c'est une limitation inévitable
+(pas de backend = pas de secret côté serveur). Le risque DOIT être documenté.
+
+AJOUTER un commentaire explicite dans license-activation.js :
+
+AVANT (ligne 7) :
+  const SECRET = 'INVOO' + '3388';
+
+APRÈS :
+  // SÉCURITÉ : Ce SECRET est intentionnellement visible dans le source JS côté client.
+  // Une PWA 100% locale ne peut pas avoir de secret serveur.
+  // La protection réelle est assurée par le Device ID unique par appareil (seed aléatoire
+  // en localStorage). Quiconque accède au JS peut lire ce SECRET, mais doit aussi connaître
+  // l'email + le deviceId pour générer une clé valide.
+  // Pour un usage personnel ou interne, ce niveau de protection est acceptable.
+  const SECRET = 'INVOO' + '3388';
+
+AUSSI AJOUTER dans docs/AUDIT-ETAT.txt ou README.md une note :
+  "La clé de licence est vérifiée localement. Le secret est visible dans le
+   code source JS (limitation inhérente aux apps sans backend). Ce système
+   est conçu pour usage personnel/interne uniquement."
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTION 18 — [P3] networkFirstNoCache — log de débogage conditionnel
+  Fichier : sw.js
+════════════════════════════════════════════════════════════════════════════════
+
+Problème : La fonction networkFirstNoCache attrape silencieusement toutes les
+erreurs fetch. Même avec DEBUG=false, il serait utile de logger les erreurs
+en mode développement pour diagnostiquer les problèmes.
+
+AVANT (sw.js, lignes 237-243) :
+  async function networkFirstNoCache(request) {
+    try {
+      return await fetch(request);
+    } catch (_) {
+      return offlineFallback(request);
+    }
+  }
+
+APRÈS :
+  async function networkFirstNoCache(request) {
+    try {
+      return await fetch(request);
+    } catch (err) {
+      // Log conditionnel uniquement — pas d'exposition d'infos en production
+      if (typeof DEBUG !== 'undefined' && DEBUG) {
+        console.warn('[SW] networkFirstNoCache échec:', request.url, err?.message);
+      }
+      return offlineFallback(request);
+    }
+  }
+
+
+════════════════════════════════════════════════════════════════════════════════
+  RÉCAPITULATIF DES FICHIERS À MODIFIER
+════════════════════════════════════════════════════════════════════════════════
+
+  sw.js
+    → Correction 1  : Ajouter price-mode.js dans PRECACHE_ASSETS
+    → Correction 1  : Incrémenter CACHE_NAME (invo-v10 → invo-v11)
+    → Correction 7  : Ajouter assets/fonts/plus-jakarta-sans/index.css
+    → Correction 13 : Retirer sw.js de PRECACHE_ASSETS
+    → Correction 16 : Retirer fonts weight 300 et 800 (après vérification)
+    → Correction 18 : Améliorer log networkFirstNoCache
+
+  manifest.json
+    → Correction 4  : Changer id en "/"
+    → Correction 5  : Ajouter shortcuts (Nouvelle facture, Historique)
+    → Correction 6  : Ajouter icône SVG dans le tableau icons
+
+  index.html
+    → Correction 2  : Ajouter aria-live sur #toast
+    → Correction 3  : Ajouter aria-label sur la sidebar
+    → Correction 11 : Corriger apple-touch-icon (192px ou 180px dédié)
+    → Correction 12 : Ajouter spinner de boot #boot-spinner
+
+  js/app.js
+    → Correction 12 : Retirer le spinner dans la chaîne de boot (finally)
+
+  js/storage.js
+    → Correction 9  : Ajouter _warnOPFSUnavailable() au fallback localStorage
+
+  js/auth.js
+    → Correction 8  : Ajouter avertissement "pas de mot de passe"
+
+  js/license-activation.js
+    → Correction 17 : Documenter le SECRET hardcodé avec commentaire explicite
+
+  scripts/build-page-templates.mjs
+    → Correction 10 : Ajouter en-tête "NE PAS MODIFIER" dans le fichier généré
+
+  README.md
+    → Correction 15 : Ajouter npm audit dans la checklist de release
+
+  package.json
+    → Correction 15 : Ajouter script "audit": "npm audit --production"
+
+  Suppression manuelle
+    → Correction 14 : Supprimer les fichiers vides "cd", "git", "main"
+
+
+════════════════════════════════════════════════════════════════════════════════
+  CORRECTIONS NON INCLUSES ICI (refactoring lourd — hors scope immédiat)
+════════════════════════════════════════════════════════════════════════════════
+
+  [P9]  Chiffrement OPFS → nécessite une refonte de storage.js avec
+        Web Crypto AES-GCM. Non trivial, à planifier séparément.
+
+  [P10] Encapsuler window.DB → nécessite de modifier tous les modules qui
+        accèdent à DB directement. Refactoring progressif recommandé.
+
+  [P14] Lazy loading xlsx + jsPDF → nécessite import() dynamique dans
+        docs.js et pdf.js, et refactoring des initialisations de librairies.
+
+  [P35] Découper docs.js → refactoring en plusieurs modules
+        (docs-calc.js, docs-pdf.js, docs-validation.js, docs-crud.js).
+
+  [P36] Découper ui.js → refactoring en sous-modules
+        (ui-nav.js, ui-toast.js, ui-modal.js, ui-charts.js).
+
+  [P39] Tests E2E Playwright → setup complet requis (séparé du scope audit).
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DES CORRECTIONS
+  INVOOFFICE — 2026-04-04
+═══════════════════════════════════════════════════════════════════════════════

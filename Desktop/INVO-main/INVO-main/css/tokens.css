@@ -1,0 +1,65 @@
+/* Design tokens */
+:root {
+  --bg: #0f1923;
+  --bg2: #141f2b;
+  --bg3: #1a2736;
+  --bg4: #1f2f3e;
+  --teal: #09bc8a;
+  --teal2: #0ecfa0;
+  --teal3: #07a378;
+  --teal-glow: rgba(9, 188, 138, 0.18);
+  --gold: #f0a500;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --s0: #ffffff;
+  --s50: #f8fafc;
+  --s100: #f1f5f9;
+  --s200: #e2e8f0;
+  --s300: #cbd5e1;
+  --s400: #94a3b8;
+  --s500: #64748b;
+  --s600: #475569;
+  --text: #e8eef4;
+  --text2: #94a8be;
+  --text3: #5a7089;
+  --text4: #3a5268;
+  --border: rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --brand: #09bc8a;
+  --brand-light: rgba(9, 188, 138, 0.12);
+  --brand-dark: #07a378;
+  --accent: #f0a500;
+  --accent-light: rgba(240, 165, 0, 0.12);
+  --danger: #ef4444;
+  --danger-light: rgba(239, 68, 68, 0.12);
+  --info: #3b82f6;
+  --info-light: rgba(59, 130, 246, 0.12);
+  --info-border: rgba(59, 130, 246, 0.3);
+  --violet: #8b5cf6;
+  --violet-light: rgba(139, 92, 246, 0.15);
+  --violet-border: rgba(139, 92, 246, 0.3);
+  --surface: #141f2b;
+  --surface2: #1a2736;
+  --sidebar-w: 240px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --control-h: 40px;
+  --control-bg: rgba(255, 255, 255, 0.04);
+  --control-bg-hover: rgba(255, 255, 255, 0.06);
+  --control-border: rgba(255, 255, 255, 0.14);
+  --control-border-hover: rgba(255, 255, 255, 0.22);
+  --ring: 0 0 0 4px rgba(9, 188, 138, 0.16);
+  --ring-danger: 0 0 0 4px rgba(239, 68, 68, 0.14);
+  --ring-blue: 0 0 0 4px rgba(59, 130, 246, 0.14);
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2309BC8A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+[data-theme='dark'] {
+  --bg: #080f17;
+  --surface: #0d1520;
+  --surface2: #111d2a;
+  --border: rgba(255, 255, 255, 0.05);
+  --brand-light: rgba(9, 188, 138, 0.08);
+  --accent-light: rgba(240, 165, 0, 0.08);
+  --danger-light: rgba(239, 68, 68, 0.08);
+}

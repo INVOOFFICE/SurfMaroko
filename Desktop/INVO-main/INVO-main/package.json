@@ -1,0 +1,37 @@
+{
+  "name": "invo-depl",
+  "private": true,
+  "description": "Application INVO — tests unitaires du moteur fiscal et durcissement PDF (Node.js)",
+  "scripts": {
+    "test": "node tests/run-tests.mjs && jest",
+    "test:jest": "jest",
+    "audit": "npm audit --production",
+    "check:merge": "node scripts/check-no-merge-conflicts.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "postinstall": "node scripts/vendor-copy.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@fontsource/plus-jakarta-sans": "^5.2.5",
+    "@supabase/supabase-js": "^2.101.1",
+    "chart.js": "^4.4.1",
+    "dompurify": "^3.2.5",
+    "flatpickr": "^4.6.13",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "papaparse": "^5.5.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^15.15.0",
+    "jest": "^30.3.0",
+    "prettier": "^3.8.1"
+  }
+}

@@ -1,0 +1,232 @@
+================================================================================
+  INVOO OFFICE — Analyse d’ensemble & feuille de route d’amélioration continue
+================================================================================
+  Fichier de référence à rouvrir à chaque itération (sprint, release, refactor).
+  Cochez [X] les points traités ; notez la date et un mot-clé en bas de fichier.
+  Dernière mise à jour du contenu rédactionnel : 2026-04-02
+================================================================================
+
+
+OBJECTIF DE CE DOCUMENT
+-----------------------
+  • Garder une vision claire des forces/faiblesses du dépôt.
+  • Prioriser sans tout faire en même temps.
+  • Rappeler les actions obligatoires à chaque déploiement (cache, versions).
+  Ce n’est pas un audit sécurité : la cybersécurité (CSP, XSS, secrets) doit faire
+  l’objet d’une revue dédiée si besoin.
+
+
+COMMENT S’EN SERVIR
+--------------------
+  1. Lire la section « État des lieux » pour le contexte.
+  2. Choisir 1 à 3 items dans « Backlog priorisé » (ne pas en multiplier).
+  3. Après chaque livraison : cocher, noter en bas « Journal des changements ».
+  4. Revoir la section « Checklist release » avant mise en production.
+
+
+================================================================================
+  ÉTAT DES LIEUX — ANALYSE APPROFONDIE
+================================================================================
+
+A. Nature du produit
+--------------------
+  Application web statique (HTML + JS + CSS), PWA hors ligne, données locales
+  (OPFS / localStorage), pas de backend INVOO obligatoire. Le pari est la
+  simplicité de déploiement (hébergement fichiers) et la confidentialité des
+  données côté client.
+
+  Points forts : autonomie, pas de compte serveur imposé, fonctionnement
+  dégradé possible sans réseau après installation.
+
+  Limites structurelles : pas de synchro multi-appareils native, sauvegarde
+  manuelle/export à encourager (déjà partiellement dans l’UX).
+
+
+B. Architecture du code
+------------------------
+  • Découpage par domaines : storage (OPFS + DB), auth, ui, docs, pdf, imports,
+    clients, fournisseurs, bons-commande, events (câblage DOM en fin de chaîne).
+  • Pas de bundler : chargement explicite des scripts dans index.html — clarté
+    pour le déploiement, mais pas de tree-shaking ni de code splitting automatique.
+  • docs.js et ui.js sont très volumineux : risque de difficulté de navigation
+    dans le code pour les nouveaux contributeurs.
+  • page-templates.js : HTML des écrans injecté en chaîne — gain de lisibilité
+    du index.html, mais fichier long et régénéré par script ; risque de dérive
+    par rapport au design system si on édite sans discipline.
+
+  Avis : l’architecture est cohérente avec un produit « vanilla » ; la dette
+  principale est la taille de certains modules et la maintenance des templates.
+
+
+C. Données et persistance
+--------------------------
+  • Enveloppes JSON versionnées (STORAGE_FORMAT) + migrations DB_VERSION dans
+    storage.js : bonne base pour évolutions sans tout casser.
+  • Chaîne d’écritures OPFS pour éviter les courses : pertinent.
+  • Export/import backup JSON : aligné avec le modèle « utilisateur responsable
+    de ses copies ».
+
+  Avis : continuer à documenter toute évolution de schéma (DB_VERSION + règles
+  de migration) dans le même fichier ou un commentaire court à côté des
+  migrations.
+
+
+D. PWA et service worker
+-------------------------
+  • Précache large (CSS importés, polices, vendors, page-templates.js) : bon pour
+    le premier passage hors ligne.
+  • CACHE_NAME versionné : mécanisme simple d’invalidation ; il faut l’incrémenter
+    quand la liste ou les fichiers critiques changent.
+  • display_override dans manifest pour desktop : étape utile ; l’exploitation
+    complète du Window Controls Overlay demanderait du CSS env() dédié.
+  • sw-register : mise à jour au focus / visibilité : bon pour récupérer les
+    nouvelles versions sans forcer l’utilisateur.
+
+  Avis : la partie PWA est au-dessus de la moyenne pour une app statique ;
+  le point fragile est l’oubli de bump de cache lors des releases.
+
+
+E. Accessibilité et i18n
+-------------------------
+  • Shell index.html : améliorations possibles (noscript, aria sur icônes).
+  • Contenu principal dans page-templates.js : doit être harmonisé avec les
+    mêmes règles (titres, boutons icône-seuls, décorations masquées aux lecteurs
+    d’écran).
+  • Langue : interface essentiellement en français en dur — OK pour le cœur
+    de cible ; internationalisation = chantier majeur si un jour nécessaire.
+
+  Avis : traiter page-templates comme la suite logique du travail fait sur
+  index.html pour ne pas créer deux niveaux de qualité a11y.
+
+
+F. Performance
+---------------
+  • Premier chargement : plusieurs bibliothèques lourdes (PDF, canvas, xlsx,
+    chart) — acceptable sur poste fixe ; à surveiller sur mobile ou connexion
+    faible.
+  • Pas de mesure automatique (Lighthouse CI, budgets) dans le dépôt visible.
+
+  Avis : envisager chargement différé ou à la demande des libs les plus lourdes
+  uniquement si des utilisateurs réels se plaignent ou si vous ciblez mobile.
+
+
+G. Tests et qualité automatisée
+--------------------------------
+  • ESLint + Prettier + Jest sur des parties de la logique (CSV, enveloppes,
+    auth, licence, etc.).
+  • Pas de tests navigateur E2E dans le dépôt : les régressions de navigation,
+    SW ou rendu restent manuelles.
+
+  Avis : ajouter 1 à 2 scénarios E2E « critiques » quand le produit se stabilise ;
+  en attendant, renforcer les tests unitaires sur les calculs fiscaux et le
+    parsing CSV reste le meilleur ROI.
+
+
+H. Documentation développeur
+-----------------------------
+  • design-system.md pour le CSS.
+  • README.md à la racine : install, scripts, déploiement statique, arborescence,
+    checklist release (voir fichier).
+
+  Avis : faire évoluer le README quand le flux de release ou les scripts changent.
+
+
+================================================================================
+  BACKLOG PRIORISÉ — À COCHER AU FIL DE L’EAU
+================================================================================
+
+Légende : P0 = fort impact / relativement rapide ; P1 = important mais plus long ;
+         P2 = confort ou long terme.
+
+--- P0 — Fondations & risques de release ---
+
+  [X] README.md à la racine : description, prérequis (Node ≥18), npm install,
+      scripts (lint, test:jest, format), déploiement statique, liens docs/.
+
+  [X] Section « Release » dans README : rappel CACHE_NAME (sw.js), DB_VERSION
+      + migrations, smoke PWA.
+
+  [X] Harmoniser accessibilité décorative (emojis, boutons, groupes) dans
+      js/page-templates.js (passe 1 — 2026-04-01 ; affiner si Lighthouse).
+
+  [X] Vérifier une fois par release : npm run lint && npm test au vert
+      (2026-04-02 : 60 tests Jest + tests Node).
+
+--- P1 — Qualité produit & maintenabilité ---
+
+  [X] Découper ou documenter l’organisation de docs.js / ui.js : index des
+      fonctions principales en tête de fichier (2026-04-02).
+
+  [ ] Envisager chargement différé (dynamic import ou script injecté) des libs
+      lourdes rarement utilisées au premier écran (ex. xlsx) si profiling réel
+      montre un problème.
+
+  [ ] Lighthouse (manuel ou CI) : noter scores Performance / A11y / PWA et une
+      cible minimale acceptée par l’équipe.
+
+  [ ] Window Controls Overlay : si priorité desktop, ajouter CSS env(titlebar-*)
+      et tests visuels sur Chrome installé.
+
+
+--- P2 — Long terme ---
+
+  [ ] Internationalisation (i18n) : seulement si marché ou partenaires l’exigent.
+
+  [ ] Tests E2E (Playwright, Cypress, etc.) : scénario minimal connexion /
+      création document / export.
+
+  [ ] Remplacer page-templates monolithique par fragments HTML + build, ou
+      convention de fichiers par page, pour réduire les conflits Git.
+
+  [ ] Couverture de tests Jest mesurée (jest --coverage) et seuil progressif.
+
+
+================================================================================
+  CHECKLIST RAPIDE AVANT CHAQUE MISE EN PRODUCTION
+================================================================================
+
+  [ ] Lint et tests passent (npm run lint, npm test — Node + Jest).
+  [ ] Si fichiers ajoutés/retirés du chargement initial : PRECACHE_ASSETS (sw.js)
+      à jour + CACHE_NAME incrémenté (ex. invo-v5 → invo-v6).
+  [ ] Si structure données OPFS modifiée : DB_VERSION + migration testée.
+  [ ] Smoke test manuel : installation PWA, ouverture hors ligne, action métier
+      critique (ex. créer ou ouvrir un document).
+  [ ] Mention dans le journal (bas de ce fichier) : date + version ou tag.
+
+
+================================================================================
+  JOURNAL DES CHANGEMENTS (à compléter par l’équipe)
+================================================================================
+
+  Format suggéré : YYYY-MM-DD — bref résumé (ex. « bump CACHE_NAME invo-v4 »).
+
+  2026-04-02 — Passe complète : a11y page-templates (6 critères), index
+               ui.js/docs.js, règle DB_MIGRATIONS + test trous, tests Jest
+               fiscal/migrations/CSV (60 tests OK), CACHE_NAME invo-v7.
+
+  _____________________________________________________________________________
+
+
+  _____________________________________________________________________________
+
+
+  _____________________________________________________________________________
+
+
+================================================================================
+  EN RÉSUMÉ — PAR OÙ COMMENCER À CHAQUE FOIS
+================================================================================
+
+  1) Si nouveau sur le projet        → lire README.md + ce fichier.
+  2) Avant une release                 → checklist + bump cache si besoin.
+  3) Pour une itération d’amélioration → 1 à 3 cases P0, pas plus.
+  4) Une fois P0 stable                → prendre P1 selon douleur réelle (perf,
+                                         gros fichiers, Lighthouse).
+  5) P2                                → quand le produit et l’équipe sont prêts.
+
+  L’avis global : le socle technique est sain pour une PWA métier offline ;
+  les gains les plus réguliers viennent de la discipline de release (cache),
+  de l’homogénéité des templates (a11y), et d’une doc minimale pour ne pas
+  dépendre d’une seule personne.
+
+================================================================================

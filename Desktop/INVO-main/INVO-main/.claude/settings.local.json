@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l \"C:\\\\Users\\\\M2B PRO\\\\desktop\\\\github\\\\invo\\\\offline2\"/*.js \"C:\\\\Users\\\\M2B PRO\\\\desktop\\\\github\\\\invo\\\\offline2\"/js/*.js)",
+      "Bash(wc:*)"
+    ]
+  }
+}

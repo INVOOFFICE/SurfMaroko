@@ -1,0 +1,674 @@
+/* Page paiement licence — s’utilise avec css/style.css + fonts-plus-jakarta */
+body.pay-licence-page {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.pay-licence-page .pay-top {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.pay-licence-page .pay-top a {
+  color: var(--teal);
+  text-decoration: none;
+}
+.pay-licence-page .pay-top a:hover {
+  text-decoration: underline;
+}
+
+/* display:block : annule .page { display:none } de tables-widgets.css (vues SPA) */
+.pay-licence-page .page {
+  display: block;
+  max-width: 520px;
+  margin: 0 auto 40px;
+  padding: 0 16px 24px;
+}
+
+.pay-licence-page .hero {
+  position: relative;
+  background: linear-gradient(155deg, #0f1923 0%, #152a38 42%, #0a4d3f 100%);
+  border-radius: var(--radius, 10px);
+  padding: 24px 20px 36px;
+  color: #e8eef4;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border2);
+  overflow: hidden;
+}
+.pay-licence-page .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 14px;
+}
+.pay-licence-page .hero-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 12px var(--teal);
+}
+.pay-licence-page .hero-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal3) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.pay-licence-page .hero-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.pay-licence-page .hero-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(232, 238, 244, 0.82);
+  max-width: 42ch;
+}
+.pay-licence-page .hero-arc {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  pointer-events: none;
+}
+.pay-licence-page .hero-arc svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--bg);
+}
+
+.pay-licence-page .tabs-wrap {
+  margin-top: -12px;
+  position: relative;
+  z-index: 1;
+  padding: 0 4px;
+}
+.pay-licence-page .tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--surface);
+  padding: 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.pay-licence-page .tab {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid transparent;
+  background: var(--control-bg);
+  color: var(--text2);
+  border-radius: 8px;
+  padding: 10px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  font-family: inherit;
+}
+.pay-licence-page .tab:hover {
+  background: var(--control-bg-hover);
+  color: var(--text);
+}
+.pay-licence-page .tab.active {
+  background: var(--brand-light);
+  border-color: rgba(9, 188, 138, 0.35);
+  color: var(--teal);
+}
+.pay-licence-page .tab-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.pay-licence-page .panel {
+  display: none;
+  margin-top: 18px;
+}
+.pay-licence-page .panel.active {
+  display: block;
+}
+
+.pay-licence-page .slabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin: 0 0 10px 4px;
+}
+
+.pay-licence-page .fcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 0;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.pay-licence-page .fitem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.pay-licence-page .fitem:last-child {
+  border-bottom: none;
+}
+.pay-licence-page .ficon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--teal);
+  background: var(--brand-light);
+}
+.pay-licence-page .ficon svg {
+  width: 18px;
+  height: 18px;
+}
+.pay-licence-page .fmeta {
+  flex: 1;
+  min-width: 0;
+}
+.pay-licence-page .flbl {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+.pay-licence-page .fval {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-all;
+}
+.pay-licence-page .fval.sm {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pay-licence-page .cbtn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.pay-licence-page .cbtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.pay-licence-page .cbtn.ok {
+  background: var(--brand-light);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.pay-licence-page .swift-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+.pay-licence-page .swift-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.pay-licence-page .swift-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+
+.pay-licence-page .infobox {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--info-light);
+  border: 1px solid var(--info-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+}
+.pay-licence-page .infobox svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--blue);
+  margin-top: 1px;
+}
+
+.pay-licence-page .bsp {
+  height: 8px;
+}
+
+/* Cash Plus */
+.pay-licence-page .cp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.pay-licence-page .cp-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.12) 0%, transparent 60%);
+  border-bottom: 1px solid var(--border);
+}
+.pay-licence-page .cp-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pay-licence-page .cp-brand-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.pay-licence-page .cp-brand-name span {
+  color: #f97316;
+}
+.pay-licence-page .cp-brand-sub {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.pay-licence-page .cp-fields {
+  padding: 8px 0;
+}
+.pay-licence-page .cp-field {
+  padding: 6px 12px;
+}
+.pay-licence-page .cp-field-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.pay-licence-page .cf-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--brand-light);
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pay-licence-page .cf-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.pay-licence-page .cf-meta {
+  flex: 1;
+  min-width: 0;
+}
+.pay-licence-page .cf-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.pay-licence-page .cf-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.pay-licence-page .cf-copy {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.pay-licence-page .cf-copy:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.pay-licence-page .cf-copy.ok {
+  background: var(--brand-light);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.pay-licence-page .cp-note {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+.pay-licence-page .cp-note svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #f97316;
+}
+
+.pay-licence-page .steps-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.pay-licence-page .steps-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+}
+.pay-licence-page .steps-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--teal);
+}
+.pay-licence-page .step-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text2);
+}
+.pay-licence-page .step-item:last-child {
+  border-bottom: none;
+}
+.pay-licence-page .step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--brand-light);
+  color: var(--teal);
+  font-weight: 800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile */
+.pay-licence-page .mb-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.pay-licence-page .mb-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 55%);
+}
+.pay-licence-page .mb-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--info-light);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pay-licence-page .mb-logo svg {
+  width: 22px;
+  height: 22px;
+}
+.pay-licence-page .mb-brand-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.pay-licence-page .mb-brand-name span {
+  color: var(--blue);
+}
+.pay-licence-page .mb-brand-sub {
+  font-size: 12px;
+  color: var(--text3);
+}
+.pay-licence-page .mb-fields {
+  padding: 8px 0;
+}
+.pay-licence-page .mb-field {
+  padding: 6px 12px;
+}
+.pay-licence-page .mb-field-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.pay-licence-page .mf-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--brand-light);
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pay-licence-page .mf-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.pay-licence-page .mf-meta {
+  flex: 1;
+  min-width: 0;
+}
+.pay-licence-page .mf-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.pay-licence-page .mf-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.pay-licence-page .mf-copy {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pay-licence-page .mf-copy:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.pay-licence-page .mf-copy.ok {
+  background: var(--brand-light);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.pay-licence-page .mb-note {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+.pay-licence-page .mb-note svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--blue);
+}
+
+.pay-licence-page .methods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pay-licence-page .method-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+}
+.pay-licence-page .mc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Light theme (cohérent avec privacy / app) */
+html[data-theme='light'] .pay-licence-page .hero {
+  border-color: rgba(16, 34, 53, 0.12);
+}
+
+.pay-licence-page .toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  z-index: 1000;
+}
+.pay-licence-page .toast svg {
+  width: 18px;
+  height: 18px;
+  color: var(--teal);
+}
+.pay-licence-page .toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 480px) {
+  .pay-licence-page .tabs {
+    flex-direction: column;
+  }
+  .pay-licence-page .tab {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 10px;
+  }
+  .pay-licence-page .tab-icon {
+    margin-bottom: 0;
+  }
+}

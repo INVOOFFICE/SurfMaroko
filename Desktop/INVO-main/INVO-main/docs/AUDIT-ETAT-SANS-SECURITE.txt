@@ -1,0 +1,294 @@
+================================================================================
+  AUDIT D’ÉTAT — INVOO / DEPL (hors sécurité)
+================================================================================
+  Document de reprise : où en est le projet, ce qui a été traité récemment,
+  par quoi continuer. Portée volontairement limitée au produit, au code,
+  à l’interface, aux données, aux tests et à la doc (pas d’autres domaines).
+  Dernière rédaction : 2026-04-02 (passe a11y + tests Jest + CACHE invo-v7)
+================================================================================
+
+
+1. RÔLE DE CE FICHIER
+---------------------
+  • Te permettre de reprendre après une pause sans relire tout l’historique.
+  • Compléter docs/AMELIORATIONS-CONTINUES.txt (backlog et checklist).
+  • Mettre à jour §8 (dernière session) et §13 (journal) quand tu avances.
+
+
+2. SYNTHÈSE PRODUIT
+-------------------
+  Application web statique de facturation (cible conformité DGI Maroc),
+  en français, données locales (navigateur : OPFS / stockage versionné),
+  installable en PWA (hors ligne après chargement). Pas de backend obligatoire
+  pour l’usage courant. Licence locale ou session d’essai (voir auth).
+
+
+3. ÉTAT TECHNIQUE (APERÇU)
+--------------------------
+  Stack        HTML + CSS modulaire + JavaScript « vanilla », sans bundler.
+               Node ≥ 18 pour lint, Prettier, Jest, scripts npm.
+
+  Point d’entrée index.html (shell, modales globales) ; contenu des écrans
+  injecté via js/page-templates.js (généré par scripts/build-page-templates.mjs).
+
+  Fichiers lourds    ui.js, docs.js — navigation dans le code plus exigeante.
+
+  PWA                manifest.json, sw.js, sw-register.js.
+                     Au moment de la rédaction : CACHE_NAME = « invo-v7 »
+                     (à incrémenter encore si tu changes le précache ou des
+                     assets critiques).
+
+  Identité affichée  manifest : name / short_name orientés « INVOOFFICE » ;
+                     index.html : title, application-name, apple-mobile-web-app-title
+                     alignés (cohérence titre PWA / onglet / iOS).
+
+
+4. INTERFACE ET EXPÉRIENCE
+--------------------------
+  Design system décrit dans docs/design-system.md : tokens (tokens.css),
+  composants (boutons, modales, formulaires, toasts, tselect), fichiers
+  pages/*.css, responsive dédié.
+
+  Icônes PWA : manifest référence icons/icon-192.png, icon-512.png,
+  variantes maskable ; apple-touch-icon et logo shell pointent vers
+  icon-512.png. Pas de mesure Lighthouse stockée dans le dépôt.
+
+  Dette UX/a11y : passage significatif sur js/page-templates.js (emojis /
+  SVG décoratifs masqués pour AT, type="button", groupes de période, options
+  et placeholders sans emoji seul) ; poursuivre si Lighthouse signale encore
+  des écarts (tableaux dynamiques, focus).
+
+
+5. DONNÉES ET PERSISTANCE
+-------------------------
+  js/storage.js : version de base (DB_VERSION), migrations décrites dans
+  la même zone du code (commentaire d’obligation + tests Jest trous et
+  comportement par entrée), enveloppes JSON. Sauvegarde / restauration type
+  backup prévus côté paramètres. Toute évolution de schéma = bump + test
+  migration + rappel dans la checklist release.
+
+
+6. QUALITÉ AUTOMATISÉE
+----------------------
+  npm run lint (ESLint), npm test (tests Node + Jest), npm run test:jest,
+  Prettier — au 2026-04-02 : 60 tests Jest (fiscal, migrations DB, CSV, etc.).
+  Pas de suite E2E navigateur dans le dépôt ; les parcours complets restent
+  manuels ou à ajouter plus tard.
+
+
+7. DOCUMENTATION
+----------------
+  README.md à la racine : installation, scripts npm, serveur local, déploiement
+  statique, arborescence utile, checklist release (CACHE_NAME, DB_VERSION, smoke
+  PWA), liens vers docs/.
+  docs/design-system.md, AMELIORATIONS-CONTINUES.txt, ce fichier d’audit.
+
+
+8. DERNIÈRE SESSION (POINT D’ARRÊT CONNU)
+-----------------------------------------
+  Voici ce qui a été clarifié ou modifié dans le fil de travail associé,
+  pour enregistrer le dernier repère :
+
+  • Fichier docs/AMELIORATIONS-CONTINUES.txt : analyse + backlog + checklist
+    release + journal (référence longue durée).
+
+  • Vérification : icons/icon-512.png est bien utilisée pour l’installation
+    PWA (manifest + apple-touch-icon + précache SW) ; les variantes
+    maskable peuvent primer sur certains lanceurs Android.
+
+  • Titre / nom PWA : passage à « INVOOFFICE » dans manifest (short_name,
+    name), meta application-name, apple-mobile-web-app-title, <title> de
+    index.html ; bump CACHE_NAME (invo-v4 puis évolutions suivantes).
+
+  • 2026-04-01 (suite) : a11y page-templates.js + CACHE_NAME invo-v5 pour
+    livraison du HTML injecté à jour côté SW.
+
+  • 2026-04-02 : passe complète — a11y page-templates (6 critères), index
+    ui.js / docs.js, règle DB_MIGRATIONS documentée + tests trous + comportement
+    migration v1, Jest fiscal / migrations / imports CSV (60 tests OK),
+    CACHE_NAME invo-v7, fix clavier nuanciers paramètres (events.js).
+
+  Si tu as fait d’autres changements depuis, ajoute une ligne datée dans
+  la section 13 (journal) ci-dessous.
+
+
+9. PAR OÙ REPRENDRE ENSUITE
+---------------------------
+  Ordre raisonnable (voir cases à cocher dans AMELIORATIONS-CONTINUES.txt) :
+
+  [X] README minimal + rappel release (CACHE_NAME, DB_VERSION).
+
+  [X] Harmoniser a11y décorative / structurale sur page-templates.js (passe 1).
+
+  [ ] Option : Lighthouse manuel ou en CI pour figurer des scores cibles.
+
+  Éviter de démarrer dix chantiers en parallèle : 1 à 3 items par cycle.
+
+
+10. SCORES EXPERT (SUR 10) — ESTIMATION, PAS LIGHTHOUSE
+--------------------------------------------------------
+  Méthode : revue statique du dépôt et de l’architecture (pas de mesure
+  navigateur ni audit terrain). Les notes servent de repère relatif, pas
+  de certification.
+
+  Axe                              Note    Lecture rapide
+  ------------------------------  ------  ------------------------------------
+  Architecture & modularité        7,0     Domaines clairs ; ui.js / docs.js
+                                          très gros ; pas de bundler.
+  Maintenabilité long terme       6,8     page-templates.js monolithique ;
+                                          génération par script = risque dérive.
+  PWA & hors ligne               8,0     Manifest, SW, précache : au-dessus
+                                          d’une simple page web.
+  Données & évolutions           7,5     Versions + migrations OPFS : base
+                                          sérieuse si discipline release.
+  Qualité automatisée            7,0     ESLint, Jest, Prettier ; pas d’E2E.
+  Interface & cohérence visuelle 7,5     Tokens, CSS découpé, design system.
+  Accessibilité                  6,8     Passe templates : décoratif masqué,
+                                          boutons explicites ; reste tests Lighthouse.
+  Documentation développeur      6,5     README + docs/ ; poursuivre au fil
+                                          des releases.
+  Maturité produit prêt usage    7,5     Usage perso / TPE plausible ; synchro
+                                          cloud hors périmètre du code.
+
+  SCORE GLOBAL ESTIMÉ : 7,3 / 10
+
+  Lecture : projet solide pour une appli métier web/PWA sans framework ; gains
+  les plus rentables : suite a11y / Lighthouse, E2E minimal, découpage ou cartes
+  des gros modules — pas une réécriture complète.
+
+
+11. AUDIT EXPERT — VERDICT DÉTAILLÉ (MÊME PÉRIMÈTRE QUE CE DOCUMENT)
+--------------------------------------------------------------------
+  Produit
+    Facturation orientée Maroc (DGI), 100 % client, français, données locales.
+    La valeur = autonomie et données chez l’utilisateur ; le modèle impose
+    sauvegardes / exports (déjà partiellement dans l’UX).
+
+  Technique
+    Vanilla + fichiers statiques : déploiement simple, scripts listés dans
+    index.html. Contrepartie : pas de code-splitting auto ; libs lourdes
+    (PDF, tableur…) — acceptable sur poste, à surveiller sur mobile faible.
+
+  PWA
+    Ensemble manifest + service worker + stratégie de mise à jour adapté au
+    produit. Point d’attention opérationnel : discipline CACHE_NAME, précache,
+    smoke test après release.
+
+  Données
+    Versionnement + migrations dans storage.js : bon réflexe pour la durée.
+    Tout changement de schéma doit rester explicite (version + migration testée).
+
+  Interface
+    Design system et tokens = base pro. Dette principale : homogénéité entre
+    shell et page-templates.js (structure, aria, titres).
+
+  Qualité logicielle
+    Lint + tests unitaires sur zones critiques : bon complément à une logique
+    métier riche. Prochain palier de confiance : quelques scénarios E2E
+    (parcours licence, création document, export).
+
+  Documentation
+    README présent : npm, déploiement, checklist release ; maintenir à jour
+    quand les scripts ou le flux de release changent.
+
+  Verdict en une phrase
+    Niveau « bon outil sérieux » vers produit abouti : ~7,3/10 ; les plus gros
+    leviers restants : affinage a11y (Lighthouse), E2E léger, clarté sur les gros fichiers,
+    sans remettre en cause la stack actuelle.
+
+
+12. CE QU’ON N’A PAS ENCORE FAIT — OBJECTIF SCORE GLOBAL 9/10
+--------------------------------------------------------------
+  Rappel : 9/10 = « très bon produit technique », pas la perfection absolue.
+  L’i18n multi-langues ou la synchro cloud ne sont pas requises pour viser 9/10
+  sur ce périmètre (produit local-first, une langue).
+
+  Écart actuel : ~7,3 → 9, soit ~1,7 point à gagner en combinant les axes
+  ci-dessous (effet cumulé ; pas besoin que chaque ligne soit à 9).
+
+  --- Documentation développeur (today ~5,5 → cible ~9) ---
+  [X] README.md racine : description, Node ≥18, npm install, scripts (lint,
+      test:jest, format), déploiement statique, liens vers docs/.
+  [X] Rappel release dans README : CACHE_NAME, DB_VERSION, smoke PWA.
+  [X] Option : petite section « Architecture des dossiers » ( où est quoi ).
+
+  --- Accessibilité (today ~6 → cible ~8,5–9) ---
+  [X] Passer page-templates.js au même standard que le shell (titres, aria
+      sur boutons icône seuls, décorations aria-hidden / sr-only). Passe 1 faite
+      (2026-04-01) ; affiner selon retours Lighthouse / lecteurs d’écran.
+  [ ] Vérifier contrastes et focus sur écrans denses (rapports, tableaux).
+  [ ] Corriger les problèmes signalés par Lighthouse Accessibilité (ou équivalent)
+      sur 2–3 écrans représentatifs.
+
+  --- Qualité automatisée (today ~7 → cible ~9) ---
+  [ ] Couverture Jest : viser les calculs fiscaux, parsing CSV, migrations
+      sensibles ; option jest --coverage + seuil minimal.
+  [ ] Suite E2E légère (Playwright ou Cypress) : parcours critiques —
+      activation ou session, création d’un document, export PDF ou backup.
+  [ ] Option CI : lint + tests (+ E2E) sur push ou sur release.
+
+  --- Architecture & maintenabilité (today ~7 / 6,8 → cible ~8,5–9) ---
+  [ ] Carte en tête de ui.js et docs.js (sections, grosses fonctions) OU
+      découpage en sous-fichiers chargés dans l’ordre (sans bundler).
+  [ ] Réduire la friction page-templates : conventions par page, ou fragments
+      + build, pour limiter les conflits et la lecture d’un seul énorme fichier.
+  [ ] Lazy-load ou chargement à la demande des libs les plus lourdes si le
+      profiling montre un besoin (mobile / première visite).
+
+  --- PWA & hors ligne (today ~8 → cible ~8,5–9) ---
+  [ ] Processus de release documenté et suivi à chaque fois (pas seulement le code).
+  [ ] Option : affinage Window Controls Overlay (desktop) si prioritaire.
+  [ ] Vérifier régulièrement la liste PRECACHE vs réalité du chargement initial.
+
+  --- Données & évolutions (today ~7,5 → cible ~8,5–9) ---
+  [ ] Tests ciblés ou checklist manuelle systématique à chaque nouvelle
+      migration DB_VERSION.
+  [ ] Courte doc des formats d’export backup (structure attendue) pour reprise.
+
+  --- Interface & cohérence (today ~7,5 → cible ~8,5–9) ---
+  [ ] Jalons Lighthouse Performance / Best Practices notés (même manuellement)
+      avec seuils acceptables pour l’équipe.
+  [ ] Passes UX sur écrans les plus chargés (réduire friction sans refonte).
+
+  --- Maturité produit « prêt usage » (today ~7,5 → cible ~9) ---
+  [ ] Messages utilisateur très clairs sur sauvegarde, perte de données,
+      restauration (sans changer le modèle local-first).
+  [ ] Parcours « première installation » : guidance jusqu’à première facture
+      (déjà partiel via onboarding — à consolider si besoin).
+
+  Ordre suggéré pour monter vite vers 9/10 sans explosion de scope :
+    1) README + discipline release
+    2) a11y page-templates + correctifs Lighthouse a11y
+    3) E2E minimal + un peu plus de Jest sur le métier
+    4) carte ou découpage ui.js / docs.js + stratégie templates
+  Revoir cette section une fois par trimestre : rayer ce qui est fait, ajuster
+  les cases si les priorités métier changent.
+
+
+13. JOURNAL DE REPRISE (à compléter par toi)
+--------------------------------------------
+  Format : YYYY-MM-DD — une phrase (ex. « README ajouté », « a11y settings »).
+
+  2026-04-01 — Audit état rédigé ; reprise : titre PWA INVOOFFICE + invo-v4.
+
+  2026-04-01 — Intégration scores expert (7,2/10) et verdict détaillé §10–11.
+
+  2026-04-01 — Ajout §12 feuille de route vers 9/10 (travail restant).
+
+  2026-04-01 — README.md racine + checklist release + arborescence ; §7/§9/§12
+               mise à jour en conséquence.
+
+  2026-04-01 — A11y js/page-templates.js (décoratif, boutons, filtres) ;
+               CACHE_NAME invo-v5 dans sw.js.
+
+  2026-04-02 — Passe complète : a11y page-templates (6 critères), index
+               ui.js/docs.js, règle DB_MIGRATIONS + test trous, tests Jest
+               fiscal/migrations/CSV (60 tests OK), CACHE_NAME invo-v7.
+
+  ____________________________________________________________________________
+
+
+================================================================================
+  Fin du document — Mettre à jour la date en tête et la section 13 à chaque
+  pause utile ou release majeure.
+================================================================================

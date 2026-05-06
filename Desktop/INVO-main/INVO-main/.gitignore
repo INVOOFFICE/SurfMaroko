@@ -1,0 +1,83 @@
+# ═══════════════════════════════════════════════════════════
+#  Fichiers à NE PAS publier sur GitHub (dépendances, secrets, locaux)
+# ═══════════════════════════════════════════════════════════
+
+# Dépendances npm (régénérées avec npm install)
+node_modules/
+
+# Rapports / caches d’outils
+coverage/
+.nyc_output/
+*.lcov
+.eslintcache
+.prettiercache
+.parcel-cache/
+.cache/
+
+# Builds / sorties (si vous ajoutez un bundler plus tard)
+dist/
+build/
+out/
+*.tgz
+
+# OS — Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# OS — macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# OS — Linux
+*~
+
+# Éditeurs / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Secrets et configuration locale (ne jamais committer)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+*.secret
+
+# Variables d’environnement tooling
+.envrc
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Fichiers temporaires / fusion
+tmp/
+temp/
+*.tmp
+*.temp
+*.orig
+*.rej
+
+# Sauvegardes / dumps locaux (éviter fuites de données clients)
+*.bak
+*_backup.json
+*.dump
+
+# Optionnel : dossier personnel Cursor (si présent à la racine du projet)
+# Décommentez si vous ne voulez pas versionner les règles Cursor locales :
+# .cursor/

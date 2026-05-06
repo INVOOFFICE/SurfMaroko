@@ -1,0 +1,8 @@
+node_modules
+js/vendor
+package-lock.json
+screenshots
+**/*.png
+.agent-transcripts
+# Prettier 3 html parser erre sur cette arborescence (parse5 / navigateur acceptent le fichier).
+index.html

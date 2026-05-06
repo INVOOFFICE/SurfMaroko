@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>INVOO OFFICE — Confidentialité des données</title>
+    <meta name="theme-color" content="#09BC8A" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .privacy-wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+        line-height: 1.65;
+        color: var(--text, #1a2736);
+      }
+      .privacy-wrap h1 {
+        font-size: 1.35rem;
+        margin: 0 0 8px;
+      }
+      .privacy-wrap .lead {
+        font-size: 13px;
+        color: var(--text2, #5a7089);
+        margin-bottom: 22px;
+      }
+      .privacy-wrap h2 {
+        font-size: 1rem;
+        margin: 22px 0 10px;
+        color: var(--text);
+      }
+      .privacy-wrap p,
+      .privacy-wrap ul {
+        font-size: 13px;
+        color: var(--text2);
+        margin: 0 0 12px;
+      }
+      .privacy-wrap ul {
+        padding-left: 1.2rem;
+      }
+      .privacy-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--teal, #09bc8a);
+        text-decoration: none;
+      }
+      .privacy-back:hover {
+        text-decoration: underline;
+      }
+      .privacy-cta-wrap {
+        margin-top: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="privacy-wrap">
+      <a class="privacy-back" href="index.html">← Retour à l’application</a>
+      <h1>Données personnelles et confidentialité</h1>
+      <p class="lead">
+        INVOO OFFICE est une application de facturation qui fonctionne dans votre navigateur. Ce
+        texte résume les traitements utiles à une mise en conformité transparente (dont RGPD si vous
+        traitez des données de personnes dans l’UE).
+      </p>
+
+      <h2>Responsable du traitement</h2>
+      <p>
+        L’utilisateur de l’application (vous ou votre entreprise) est en principe
+        <strong>responsable du traitement</strong> des données saisies (clients, factures, etc.).
+        L’éditeur du logiciel fournit un outil qui s’exécute localement.
+      </p>
+
+      <h2>Où sont stockées les données ?</h2>
+      <p>
+        Les données sont enregistrées <strong>sur votre appareil</strong> (navigateur : stockage
+        local et, lorsque c’est disponible, espace de fichiers privé du site — OPFS). Elles ne sont
+        pas envoyées à un « cloud INVOO OFFICE » par l’application elle-même.
+      </p>
+
+      <h2>Référence de demande de clé</h2>
+      <p>
+        L’application peut générer une <strong>référence locale</strong> (code affiché / copié dans
+        le navigateur) pour faciliter l’échange avec un distributeur. Aucun envoi automatique vers un
+        serveur INVOO OFFICE ou un prestataire tiers n’est effectué par cette fonction.
+      </p>
+
+      <h2>Bibliothèques (fichiers locaux)</h2>
+      <p>
+        Les composants tiers (PDF, graphiques, tableur, calendrier, etc.) sont fournis sous forme de
+        fichiers dans le dépôt de l’application et mis en cache par le navigateur pour un usage
+        hors-ligne, sans dépendre de CDN publics au chargement.
+      </p>
+
+      <h2>Vos droits (information générale)</h2>
+      <ul>
+        <li>
+          <strong>Accès / portabilité</strong> : utilisez les exports (JSON, Excel, CSV) prévus dans
+          l’application.
+        </li>
+        <li>
+          <strong>Effacement</strong> : supprimez les données du site dans les paramètres du
+          navigateur, ou la fonction d’effacement globale si vous l’utilisez dans l’app.
+        </li>
+        <li>
+          <strong>Sécurité</strong> : protégez l’accès à votre poste et faites des sauvegardes
+          régulières du fichier JSON exporté.
+        </li>
+      </ul>
+
+      <h2>Évolutions</h2>
+      <p>
+        Ce texte peut être mis à jour avec les évolutions du produit. La date de dernière révision
+        figure dans le dépôt ou la livraison que vous utilisez.
+      </p>
+
+      <p class="privacy-cta-wrap">
+        <a class="btn btn-primary" href="index.html">Ouvrir INVOO OFFICE</a>
+      </p>
+    </div>
+  </body>
+</html>

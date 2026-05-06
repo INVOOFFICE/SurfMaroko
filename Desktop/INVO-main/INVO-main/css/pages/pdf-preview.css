@@ -1,0 +1,55 @@
+/* split chunk: pdf-preview.css */
+/* Aperçu PDF : une ligne desktop ; petit écran = titre + fermer, puis Télécharger PDF */
+.modal-header.pdf-preview-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: 'brand dl close';
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 0;
+}
+.pdf-preview-header-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.pdf-preview-header-titles {
+  min-width: 0;
+}
+.pdf-preview-header-titles .modal-title {
+  line-height: 1.25;
+}
+.pdf-preview-btn-dl {
+  grid-area: dl;
+}
+#modal-preview-pdf .pdf-preview-header > .modal-close {
+  grid-area: close;
+}
+
+/* Aperçu PDF — tablette / mobile : titre + sous-titre sur la 1re ligne (avec ✕), puis boutons pleine largeur en dessous */
+@media (max-width: 1024px) {
+  #modal-preview-pdf .modal-header.pdf-preview-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand close'
+      'dl dl';
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 10px;
+    justify-content: stretch;
+  }
+  #modal-preview-pdf .modal-header.pdf-preview-header .pdf-preview-header-brand {
+    align-self: start;
+  }
+  #modal-preview-pdf .modal-header.pdf-preview-header > .modal-close {
+    align-self: start;
+  }
+  #modal-preview-pdf .modal-header.pdf-preview-header .pdf-preview-btn-dl {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}

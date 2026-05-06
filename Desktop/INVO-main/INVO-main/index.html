@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INVOOFFICE — Facturation 100% Conforme DGI Maroc</title>
+
+<!-- ═══ PWA — Manifest + icônes + thème ═══ -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#09BC8A">
+<!-- CSP — ressources locales uniquement (PWA hors-ligne) -->
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self' data: blob:;
+  script-src 'self';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob:;
+  font-src 'self' data:;
+  worker-src 'self' blob:;
+  connect-src 'self' blob: https://*.supabase.co wss://*.supabase.co;
+  frame-src 'self' data: blob:;
+  frame-ancestors 'none';
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+  block-all-mixed-content;">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="INVOOFFICE">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="INVOOFFICE">
+
+<link rel="stylesheet" href="css/fonts-plus-jakarta.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="js/vendor/flatpickr.min.css">
+</head>
+<body>
+
+<div id="boot-spinner" aria-hidden="true" style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0f1923;flex-direction:column;gap:16px">
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="animation:bootSpin 1s linear infinite" aria-hidden="true">
+    <circle cx="24" cy="24" r="20" stroke="rgba(9,188,138,0.2)" stroke-width="4"/>
+    <path d="M24 4a20 20 0 0 1 20 20" stroke="#09BC8A" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <div style="color:#94a8be;font-size:13px;font-family:system-ui,sans-serif">Chargement…</div>
+</div>
+<style>@keyframes bootSpin { to { transform: rotate(360deg); } }</style>
+
+<noscript>
+  <style>
+    #app {
+      display: none !important;
+    }
+    .noscript-fallback {
+      box-sizing: border-box;
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(145deg, #0f1923 0%, #1a2835 50%, #0f1923 100%);
+      color: #e8eef4;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .noscript-fallback-inner {
+      max-width: 520px;
+      width: 100%;
+      border: 1px solid rgba(9, 188, 138, 0.35);
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+      background: rgba(20, 31, 43, 0.95);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+    }
+    .noscript-fallback h1 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #f0f4f8;
+    }
+    .noscript-fallback p {
+      margin: 0 0 14px;
+      font-size: 0.95rem;
+      color: #94a8be;
+    }
+    .noscript-fallback strong {
+      color: #09bc8a;
+    }
+    .noscript-fallback ol {
+      margin: 0 0 16px;
+      padding-left: 1.25rem;
+      color: #c5d4e0;
+      font-size: 0.9rem;
+    }
+    .noscript-fallback li {
+      margin-bottom: 8px;
+    }
+    .noscript-fallback .noscript-hint {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.82rem;
+      color: #7a8fa3;
+    }
+  </style>
+  <div class="noscript-fallback" role="alert">
+    <div class="noscript-fallback-inner">
+      <h1>JavaScript est désactivé</h1>
+      <p>
+        <strong>INVOO OFFICE</strong> est une application qui fonctionne entièrement dans votre navigateur
+        (données locales, factures, PDF, mode hors ligne). <strong>Elle nécessite JavaScript activé</strong>
+        pour pouvoir démarrer.
+      </p>
+      <p>Activez JavaScript, puis rechargez cette page :</p>
+      <ol>
+        <li><strong>Chrome / Edge / Brave :</strong> menu ⋮ → Paramètres → Confidentialité et sécurité → Paramètres des sites → JavaScript → Autoriser les sites à utiliser JavaScript.</li>
+        <li><strong>Firefox :</strong> menu → Paramètres → Confidentialité et sécurité → autoriser le JavaScript (ou désactiver les bloqueurs sur ce site).</li>
+        <li><strong>Safari (Mac / iOS) :</strong> Réglages → Safari → Avancé → activer JavaScript ; sur Mac : Safari → Réglages → Sécurité → cocher JavaScript.</li>
+      </ol>
+      <p class="noscript-hint">
+        Si JavaScript est déjà activé, vérifiez qu’aucune extension (bloqueur de scripts, mode strict) ne bloque ce domaine.
+      </p>
+    </div>
+  </div>
+</noscript>
+
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ONBOARDING -->
+<div id="onboarding-overlay" role="dialog" aria-modal="true" aria-labelledby="ob-title" aria-hidden="true">
+  <div class="ob-card">
+    <div class="ob-progress"><div class="ob-progress-fill ob-progress-fill-init" id="ob-progress-fill"></div></div>
+    <div class="ob-header">
+      <div class="ob-icon" id="ob-icon" aria-hidden="true">🏢</div>
+      <h2 id="ob-title">Bienvenue dans INVOO OFFICE</h2>
+      <p id="ob-desc">Configurez votre entreprise en 3 étapes pour créer des factures conformes aux normes DGI marocaines.</p>
+    </div>
+    <div class="ob-body" id="ob-body">
+      <div class="field-row c2">
+        <div class="form-group"><label for="ob-name">Nom / Raison Sociale *</label><input id="ob-name" name="onboarding-company-name" autocomplete="organization" placeholder="Votre Entreprise SARL" required></div>
+        <div class="form-group"><label for="ob-phone">Téléphone</label><input id="ob-phone" name="onboarding-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+212 6XX XX XX XX"></div>
+      </div>
+      <div class="form-group"><label for="ob-address">Adresse</label><input id="ob-address" name="onboarding-address" autocomplete="street-address" placeholder="N° Rue, Ville, Code Postal"></div>
+      <div class="field-row c2">
+        <div class="form-group"><label for="ob-ice">ICE</label><input id="ob-ice" name="onboarding-ice" placeholder="000000000000000" maxlength="15" pattern="\d{15}" inputmode="numeric"></div>
+        <div class="form-group"><label for="ob-if">IF</label><input id="ob-if" name="onboarding-if" placeholder="00000000" maxlength="8" pattern="\d{1,8}" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <div class="ob-steps">
+        <div class="ob-step-dot active" id="ob-dot-0"></div>
+        <div class="ob-step-dot" id="ob-dot-1"></div>
+        <div class="ob-step-dot" id="ob-dot-2"></div>
+      </div>
+      <div class="ob-footer-actions">
+        <button class="btn btn-secondary btn-sm" id="ob-skip-btn">Passer</button>
+        <button class="btn btn-primary btn-sm" id="ob-next-btn">Continuer →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div id="search-backdrop" aria-hidden="true"></div>
+<div id="search-panel" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="search-title">
+  <h2 id="search-title" class="sr-only">Recherche rapide</h2>
+  <div class="search-input-wrap">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="search-input" placeholder="Rechercher facture, client, article..." autocomplete="off">
+    <button type="button" id="search-close" class="search-close" aria-label="Fermer la recherche"><span aria-hidden="true">✕</span></button>
+    <span class="search-shortcut">Échap pour fermer</span>
+  </div>
+  <div id="search-results"></div>
+  <div id="search-footer">
+    <span><span class="sf-key">↑↓</span> Naviguer</span>
+    <span><span class="sf-key">↵</span> Ouvrir</span>
+    <span><span class="sf-key">Échap</span> Fermer</span>
+  </div>
+</div>
+
+<!-- NOTIF PANEL -->
+<div id="notif-panel">
+  <div class="notif-panel-header">
+    <span class="notif-panel-title">Notifications</span>
+    <button class="notif-mark-all" id="btn-mark-all-read">Tout marquer lu</button>
+  </div>
+  <div class="notif-list" id="notif-list"></div>
+</div>
+
+<!-- MOBILE: sidebar overlay -->
+<div id="sidebar-overlay"></div>
+
+<!-- MOBILE: bottom tab bar -->
+<div id="mob-tabbar"><div id="mob-tabbar-inner"><button class="mob-tab active" data-page="overview"><span class="mob-tab-icon" aria-hidden="true">📊</span><span class="mob-tab-label">Accueil</span></button><button class="mob-tab" data-page="generate"><span class="mob-tab-icon" aria-hidden="true">✚</span><span class="mob-tab-label">Créer</span></button><button class="mob-tab" data-page="history"><span class="mob-tab-icon" aria-hidden="true">📋</span><span class="mob-tab-label">Historique</span></button><button class="mob-tab" data-page="clients"><span class="mob-tab-icon" aria-hidden="true">👥</span><span class="mob-tab-label">Clients</span></button><button class="mob-tab" data-action="menu"><span class="mob-tab-icon" aria-hidden="true">☰</span><span class="mob-tab-label">Menu</span></button></div></div>
+
+<!-- MOBILE: actions sheet (feature parity desktop/mobile) -->
+<div id="mob-actions-overlay" aria-hidden="true"></div>
+<section id="mob-actions-sheet" aria-hidden="true" aria-label="Actions mobile">
+  <div class="mob-actions-sheet-header">
+    <div class="mob-actions-sheet-title">Plus d'actions</div>
+    <button type="button" id="mob-actions-close" class="mob-actions-close" aria-label="Fermer le menu mobile"><span aria-hidden="true">✕</span></button>
+  </div>
+  <div class="mob-actions-grid">
+    <button type="button" class="mob-action-item" data-page="reports"><span aria-hidden="true">📈</span>Rapports / Fiscal</button>
+    <button type="button" class="mob-action-item" data-page="fournisseurs"><span aria-hidden="true">🏭</span>Fournisseurs</button>
+    <button type="button" class="mob-action-item" data-page="bons-commande"><span aria-hidden="true">📋</span>Bons de commande</button>
+    <button type="button" class="mob-action-item" data-page="stock"><span aria-hidden="true">📦</span>Gestion Stock</button>
+    <button type="button" class="mob-action-item" data-page="settings"><span aria-hidden="true">⚙️</span>Paramètres</button>
+    <button type="button" class="mob-action-item" id="mob-action-theme"><span aria-hidden="true">🌙</span>Changer thème</button>
+    <button type="button" class="mob-action-item" id="mob-action-whatsapp"><span aria-hidden="true">💬</span>Support WhatsApp</button>
+    <button type="button" class="mob-action-item mob-action-item-danger" id="mob-action-logout"><span aria-hidden="true">⎋</span>Terminer session</button>
+  </div>
+</section>
+
+<!-- MOBILE: FAB -->
+<button id="mob-fab" aria-label="Créer un document"><span aria-hidden="true">✚</span></button>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav id="sidebar" aria-label="Navigation principale">
+    <div class="sb-logo">
+      <img class="sb-logo-img" src="icons/icon-512.png" alt="INVOO OFFICE" width="36" height="36" loading="lazy" decoding="async">
+      <div class="sb-logo-text">INVOO<span>Conforme DGI Maroc</span></div>
+    </div>
+    <div class="sb-section">Principal</div>
+    <button type="button" class="sb-item active" data-page="overview"><span class="sb-icon" aria-hidden="true">📊</span><span class="sb-label">Vue d'ensemble</span></button>
+    <button type="button" class="sb-item" data-page="generate"><span class="sb-icon" aria-hidden="true">✚</span><span class="sb-label">Générer Document</span></button>
+    <button type="button" class="sb-item" data-page="history"><span class="sb-icon" aria-hidden="true">📋</span><span class="sb-label">Historique</span></button>
+    <button type="button" class="sb-item" data-page="reports"><span class="sb-icon" aria-hidden="true">📈</span><span class="sb-label">Rapports / Fiscal</span></button>
+    <div class="sb-section">Gestion</div>
+    <button type="button" class="sb-item" data-page="clients"><span class="sb-icon" aria-hidden="true">👥</span><span class="sb-label">Clients</span></button>
+    <button type="button" class="sb-item" data-page="fournisseurs"><span class="sb-icon" aria-hidden="true">🏭</span><span class="sb-label">Fournisseurs</span></button>
+    <button type="button" class="sb-item" data-page="bons-commande"><span class="sb-icon" aria-hidden="true">📋</span><span class="sb-label">Bons de commande</span></button>
+    <button type="button" class="sb-item" data-page="stock"><span class="sb-icon" aria-hidden="true">📦</span><span class="sb-label">Gestion Stock</span></button>
+    <div class="sb-section">Configuration</div>
+    <button type="button" class="sb-item" data-page="settings"><span class="sb-icon" aria-hidden="true">⚙️</span><span class="sb-label">Paramètres</span></button>
+    <div class="sb-spacer"></div>
+    <div class="sb-section">Support</div>
+    <button type="button" class="sb-wa" aria-label="Contacter le support WhatsApp">
+      <span class="sb-icon sb-icon-light" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></span>
+      <span class="sb-wa-text">Contact WhatsApp</span>
+    </button>
+    <div class="sb-bottom">
+      <button type="button" class="sb-item" data-action="theme"><span class="sb-icon" id="theme-icon" aria-hidden="true">🌙</span><span class="sb-label">Changer thème</span></button>
+      <button type="button" class="sb-item sb-item-logout" id="btn-logout" title="Terminer la session">
+        <span class="sb-icon sb-icon-danger" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </span>
+        <span class="sb-label">Terminer la session</span>
+      </button>
+    </div>
+    <div id="app-footer-tagline" class="sb-footer-tagline" aria-label="Mentions INVOO OFFICE"></div>
+  </nav>
+
+  <div id="main">
+    <div class="opfs-bar" id="opfs-bar"><span class="opfs-bar-dot"></span><span>Stockage OPFS actif — données illimitées · Sauvegarde automatique dans ce navigateur</span><span class="opfs-bar-info" id="opfs-bar-info"></span></div>
+    <div id="topbar">
+      <button class="tb-toggle" aria-label="Basculer la barre latérale" aria-controls="sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="tb-title" id="topbar-title">Tableau de bord</div>
+      <div class="tb-badge" id="topbar-badge">Vue d'ensemble</div>
+      <div class="topbar-spacer"></div>
+      <!-- Bouton installer PWA (caché par défaut, affiché par beforeinstallprompt) -->
+      <button id="btn-install-pwa" title="Installer l'application" class="btn-install-pwa">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 18v1a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/></svg>
+        Installer
+      </button>
+      <button class="search-trigger" id="btn-search-trigger" aria-label="Ouvrir la recherche">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span class="search-trigger-key">⌘K</span>
+      </button>
+      <button class="notif-btn" id="notif-btn" aria-label="Ouvrir les notifications" aria-controls="notif-panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-badge"></span>
+      </button>
+      <button class="theme-toggle" aria-label="Changer le thème"><span id="theme-btn-icon" aria-hidden="true">🌙</span></button>
+      <button id="btn-logout-mobile" title="Terminer la session" aria-label="Terminer la session" class="btn-logout-mobile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="content"></div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="modal-overlay" id="modal-stock-moves" role="dialog" aria-modal="true" aria-labelledby="stock-moves-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="stock-moves-modal-title"><span aria-hidden="true">🧾</span> Historique des mouvements de stock</div>
+      <button type="button" class="modal-close" id="btn-close-stock-moves" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="stock-moves-filters">
+        <div class="stock-moves-search-wrap">
+          <label for="stock-moves-search" class="sr-only">Rechercher par article ou code barre</label>
+          <input type="text" id="stock-moves-search" name="stock-moves-search" placeholder="🔍 Article ou code barre..." autocomplete="off">
+        </div>
+        <label for="stock-moves-action-filter" class="sr-only">Filtrer par type de mouvement</label>
+        <select id="stock-moves-action-filter" name="stock-moves-action-filter">
+          <option value="">Tous les types</option>
+          <option value="import">Import (création)</option>
+          <option value="replace">Remplacement</option>
+          <option value="adjust">Ajustement</option>
+        </select>
+        <button class="btn btn-danger btn-sm" id="btn-clear-stock-moves"><span aria-hidden="true">🗑</span> Vider</button>
+      </div>
+      <div class="tbl-wrap stock-moves-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Type</th><th>Article</th><th>Code barre</th><th>Ancien</th><th>Nouveau</th><th>Variation</th>
+            </tr>
+          </thead>
+          <tbody id="stock-moves-tbody"></tbody>
+        </table>
+      </div>
+      <div id="stock-moves-empty" class="empty-state stock-moves-empty">
+        <h3>Aucun mouvement</h3>
+        <p>Les mouvements d’import/remplacement/ajustement apparaîtront ici.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-cancel-stock-moves">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL IMPORT EN MASSE STOCK ══ -->
+<div class="modal-overlay" id="modal-import-masse" role="dialog" aria-modal="true" aria-labelledby="import-masse-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="import-masse-modal-title"><span aria-hidden="true">📥</span> Import CSV — Stock</div>
+      <button type="button" class="modal-close" id="btn-close-import-masse" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <p class="import-help-text">Le fichier suit les <strong>mêmes champs</strong> que la grille « Gestion du Stock ». Après chargement, un <strong>aperçu</strong> permet de vérifier la cohérence avant d’enregistrer ; les doublons de code-barres sont signalés.</p>
+      <!-- Zone upload -->
+      <div id="import-drop-zone" data-dropzone="import" class="import-drop-zone">
+        <div class="import-drop-icon" aria-hidden="true">📂</div>
+        <div class="import-drop-title">Glissez votre fichier CSV ici</div>
+        <div class="import-drop-sub">ou cliquez pour sélectionner</div>
+        <div class="import-drop-cta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choisir un fichier CSV
+        </div>
+        <div class="import-drop-note">Formats acceptés : .csv (séparateur virgule ou point-virgule)</div>
+        <input type="file" id="import-masse-file" accept=".csv,.txt" class="import-file-input">
+      </div>
+
+      <!-- Modèle CSV -->
+      <div class="import-template-card">
+        <div class="import-template-head">
+          <div class="import-template-title"><span aria-hidden="true">📋</span> Format du fichier CSV attendu</div>
+          <button class="btn btn-secondary btn-sm" id="btn-dl-import-template"><span aria-hidden="true">⬇️</span> Télécharger le modèle</button>
+        </div>
+        <div class="import-template-code">
+          nom,code_barre,categorie,fournisseur,quantite,prix_achat_ttc,prix_vente_ttc,tva,unite,seuil_alerte<br>
+          Produit A,123456789,Electronique,ACME SARL,50,100,150,20,pièce,5<br>
+          Produit B,987654321,Textile,,30,40,70,0,mètre,10
+        </div>
+        <div class="import-template-meta">* Seul le champ <strong class="text-strong">nom</strong> est obligatoire. Les autres colonnes sont optionnelles. <strong class="text-strong">fournisseur</strong> : raison sociale telle qu’enregistrée dans Fournisseurs (reconnaissance sans tenir compte des majuscules) ; laisser vide si aucun. Colonnes recommandées : <strong class="text-strong">prix_achat_ttc</strong> et <strong class="text-strong">prix_vente_ttc</strong> (anciens noms <code class="code-inline-xs">prix_achat</code>/<code class="code-inline-xs">prix_vente</code> toujours acceptés).</div>
+        <div class="import-template-meta import-template-meta-tight"><strong class="text-strong">Quantité</strong> : accepte <code class="code-inline-xs">40</code> (remplacement), <code class="code-inline-xs">+5</code> (ajout), <code class="code-inline-xs">-3</code> (retrait) en mode <strong>Ajuster stock</strong>.</div>
+        <div class="import-template-meta import-template-meta-tight">Encodage : l’import détecte <strong>UTF-8</strong> (recommandé, avec ou sans BOM) et le CSV « Excel » classique (<strong>Windows-1252</strong>) pour que les accents (Café, à, é…) s’affichent correctement dans l’aperçu.</div>
+      </div>
+
+      <!-- Aperçu -->
+      <div id="import-preview-wrap" class="import-preview-wrap">
+        <div class="import-preview-head">
+          <div class="import-preview-title">Aperçu des données (<span id="import-preview-count">0</span> articles)</div>
+          <div class="import-mode-group">
+            <label class="import-mode-option">
+              <input type="radio" name="import-stock-mode" id="import-stock-mode-replace" value="replace" class="import-radio"> Remplacer si existe
+            </label>
+            <label class="import-mode-option">
+              <input type="radio" name="import-stock-mode" id="import-stock-mode-adjust" value="adjust" class="import-radio"> Ajuster stock (+X / -X / X)
+            </label>
+            <label class="import-mode-option">
+              <input type="radio" name="import-stock-mode" id="import-stock-mode-skip" value="skip" checked class="import-radio"> Ignorer si existe
+            </label>
+          </div>
+        </div>
+        <div class="tbl-wrap import-preview-table-wrap">
+          <table><thead><tr>
+            <th>Statut</th><th>Nom</th><th>Code barre</th><th>Catégorie</th><th>Fournisseur</th><th>Qté</th><th>Prix achat</th><th>Prix vente</th><th>TVA</th>
+          </tr></thead>
+          <tbody id="import-preview-tbody"></tbody></table>
+        </div>
+        <div id="import-errors-wrap" class="import-errors-wrap">
+          <div class="import-errors-box">
+            <div class="import-errors-title"><span aria-hidden="true">⚠️</span> Avertissements</div>
+            <div id="import-errors-list" class="import-errors-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-cancel-import-masse">Annuler</button>
+      <button class="btn btn-primary import-confirm-btn" id="btn-confirm-import-masse">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Importer les articles
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL IMPORT CSV — FOURNISSEURS ══ -->
+<div class="modal-overlay" id="modal-import-fourn" role="dialog" aria-modal="true" aria-labelledby="import-fourn-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="import-fourn-modal-title"><span aria-hidden="true">📥</span> Import CSV — Fournisseurs</div>
+      <button type="button" class="modal-close" id="btn-close-import-fourn" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <p class="import-help-text">Le fichier reprend les <strong>mêmes colonnes</strong> que l’export CSV et la fiche fournisseur. Après chargement, un <strong>aperçu</strong> indique les <strong>nouveaux</strong> enregistrements, les <strong>mises à jour</strong> (même <code class="code-inline-xs">id</code> qu’en base) et les <strong>doublons</strong> (même nom + ICE) ignorés à l’import.</p>
+      <div id="import-fourn-drop-zone" data-dropzone="import-fourn" class="import-drop-zone">
+        <div class="import-drop-icon" aria-hidden="true">📂</div>
+        <div class="import-drop-title">Glissez votre fichier CSV ici</div>
+        <div class="import-drop-sub">ou cliquez pour sélectionner</div>
+        <div class="import-drop-cta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choisir un fichier CSV
+        </div>
+        <div class="import-drop-note">Formats acceptés : .csv (séparateur virgule ou point-virgule)</div>
+        <input type="file" id="import-fourn-file" accept=".csv,.txt" class="import-file-input">
+      </div>
+      <div class="import-template-card">
+        <div class="import-template-head">
+          <div class="import-template-title"><span aria-hidden="true">📋</span> Format du fichier CSV attendu</div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-dl-fourn-template"><span aria-hidden="true">⬇️</span> Télécharger le modèle</button>
+        </div>
+        <div class="import-template-code">
+          id,nom,categorie,score,ice,if,email,telephone,ville,adresse,notes<br>
+          ,Fournisseur Exemple,Matériel,A,,,contact@exemple.ma,0522000000,Rabat,,<br>
+          fourn_abc123,Nom existant,,B,123456789012345,,,,,,
+        </div>
+        <div class="import-template-meta">* Le champ <strong class="text-strong">nom</strong> (raison sociale) est obligatoire. La colonne <strong class="text-strong">id</strong> est optionnelle : laissez vide pour créer ; renseignez l’id INVOO pour <strong>mettre à jour</strong> la fiche. <strong class="text-strong">score</strong> : A, B ou C. Alias anciens toujours acceptés : <code class="code-inline-xs">name/category/phone/address/city/tel</code>.</div>
+        <div class="import-template-meta import-template-meta-tight">Encodage : <strong>UTF-8</strong> (recommandé) ou CSV Excel (<strong>Windows-1252</strong>) — détection automatique comme pour le stock.</div>
+      </div>
+      <div id="import-fourn-preview-wrap" class="import-preview-wrap">
+        <div class="import-preview-head import-preview-head-compact">
+          <div class="import-preview-title">Aperçu des données (<span id="import-fourn-preview-count">0</span> lignes)</div>
+        </div>
+        <div class="tbl-wrap import-preview-table-wrap">
+          <table><thead><tr>
+            <th>Statut</th><th>Nom</th><th>Catégorie</th><th>Score</th><th>ICE</th><th>Email</th><th>Téléphone</th><th>Ville</th>
+          </tr></thead>
+          <tbody id="import-fourn-preview-tbody"></tbody></table>
+        </div>
+        <div id="import-fourn-errors-wrap" class="import-errors-wrap">
+          <div class="import-errors-box">
+            <div class="import-errors-title"><span aria-hidden="true">⚠️</span> Avertissements</div>
+            <div id="import-fourn-errors-list" class="import-errors-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="btn-cancel-import-fourn">Annuler</button>
+      <button type="button" class="btn btn-primary import-confirm-btn" id="btn-confirm-import-fourn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Importer les fournisseurs
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL IMPORT CSV — CLIENTS ══ -->
+<div class="modal-overlay" id="modal-import-clients" role="dialog" aria-modal="true" aria-labelledby="import-clients-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="import-clients-modal-title"><span aria-hidden="true">📥</span> Import CSV — Clients</div>
+      <button type="button" class="modal-close" id="btn-close-import-clients" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <p class="import-help-text">
+        Le fichier reprend les <strong>mêmes champs</strong> que la grille « Gestion des Clients ».
+        Après chargement, un <strong>aperçu</strong> permet de vérifier la cohérence avant d’enregistrer.
+      </p>
+
+      <!-- Zone upload -->
+      <div id="import-clients-drop-zone" data-dropzone="import-clients" class="import-drop-zone">
+        <div class="import-drop-icon" aria-hidden="true">📂</div>
+        <div class="import-drop-title">Glissez votre fichier CSV ici</div>
+        <div class="import-drop-sub">ou cliquez pour sélectionner</div>
+        <div class="import-drop-cta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choisir un fichier CSV
+        </div>
+        <div class="import-drop-note">Formats acceptés : .csv (séparateur virgule ou point-virgule)</div>
+        <input type="file" id="import-clients-file" accept=".csv,.txt" class="import-file-input">
+      </div>
+
+      <!-- Modèle CSV -->
+      <div class="import-template-card">
+        <div class="import-template-head">
+          <div class="import-template-title"><span aria-hidden="true">📋</span> Format du fichier CSV attendu</div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-dl-import-clients-template"><span aria-hidden="true">⬇️</span> Télécharger le modèle</button>
+        </div>
+        <div class="import-template-code">
+          nom,ice,if,rc,email,telephone,ville<br>
+          Client Exemple SARL,123456789012345,12345678,54321,contact@exemple.ma,0522000000,Casablanca<br>
+          Client Particulier,,,,nom.prenom@email.com,0611223344,Rabat
+        </div>
+        <div class="import-template-meta">
+          * Le champ <strong class="text-strong">nom</strong> est obligatoire.
+          Les autres colonnes sont optionnelles : <strong class="text-strong">ice</strong>, <strong class="text-strong">if</strong>, <strong class="text-strong">rc</strong>, <strong class="text-strong">email</strong>, <strong class="text-strong">telephone</strong>, <strong class="text-strong">ville</strong>.
+        </div>
+        <div class="import-template-meta import-template-meta-tight">
+          Encodage : l’import détecte <strong>UTF-8</strong> (recommandé, avec ou sans BOM) et le CSV « Excel » classique (<strong>Windows-1252</strong>) pour que les accents (Café, à, é…) s’affichent correctement dans l’aperçu.
+        </div>
+      </div>
+
+      <!-- Aperçu -->
+      <div id="import-clients-preview-wrap" class="import-preview-wrap">
+        <div class="import-preview-head import-preview-head-compact">
+          <div class="import-preview-title">Aperçu des données (<span id="import-clients-preview-count">0</span> clients)</div>
+          <div class="import-mode-group">
+            <label class="import-mode-option">
+              <input type="checkbox" id="import-overwrite-clients" class="import-radio"> Écraser si le client existe déjà (nom + ICE)
+            </label>
+          </div>
+        </div>
+        <div class="tbl-wrap import-preview-table-wrap">
+          <table><thead><tr>
+            <th>Statut</th><th>Nom</th><th>ICE</th><th>IF</th><th>RC</th><th>Email</th><th>Téléphone</th><th>Ville</th>
+          </tr></thead>
+          <tbody id="import-clients-preview-tbody"></tbody></table>
+        </div>
+        <div id="import-clients-errors-wrap" class="import-errors-wrap">
+          <div class="import-errors-box">
+            <div class="import-errors-title"><span aria-hidden="true">⚠️</span> Avertissements</div>
+            <div id="import-clients-errors-list" class="import-errors-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="btn-cancel-import-clients">Annuler</button>
+      <button type="button" class="btn btn-primary import-confirm-btn" id="btn-confirm-import-clients">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Importer les clients
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL FOURNISSEUR ══ -->
+<div class="modal-overlay" id="modal-fourn" role="dialog" aria-modal="true" aria-labelledby="fourn-modal-title" aria-hidden="true">
+  <div class="modal modal-fourn">
+    <div class="modal-header">
+      <div class="modal-title" id="fourn-modal-title">Nouveau Fournisseur</div>
+      <button type="button" class="modal-close" id="btn-close-fourn" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Score fiabilité -->
+      <div class="fourn-score-wrap">
+        <p class="fourn-score-label" id="fourn-score-legend">Score de fiabilité</p>
+        <div class="fourn-score-cards" id="fourn-score-cards" role="radiogroup" aria-labelledby="fourn-score-legend">
+          <label class="fourn-score-option">
+            <input type="radio" name="fourn-score-radio" value="A" class="fourn-score-radio">
+            <div class="fourn-score-card fourn-score-card-active" data-score="A">
+              <div class="fourn-score-emoji" aria-hidden="true">🟢</div>
+              <div class="fourn-score-text fourn-score-text-a">A — Fiable</div>
+            </div>
+          </label>
+          <label class="fourn-score-option">
+            <input type="radio" name="fourn-score-radio" value="B" class="fourn-score-radio">
+            <div class="fourn-score-card fourn-score-card-inactive" data-score="B">
+              <div class="fourn-score-emoji" aria-hidden="true">🔵</div>
+              <div class="fourn-score-text">B — Correct</div>
+            </div>
+          </label>
+          <label class="fourn-score-option">
+            <input type="radio" name="fourn-score-radio" value="C" class="fourn-score-radio">
+            <div class="fourn-score-card fourn-score-card-inactive" data-score="C">
+              <div class="fourn-score-emoji" aria-hidden="true">🟠</div>
+              <div class="fourn-score-text">C — À surveiller</div>
+            </div>
+          </label>
+        </div>
+        <!-- Champ caché pour la valeur score utilisée par saveFourn() -->
+        <select id="f-score" class="fourn-score-select-hidden"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+      </div>
+
+      <div class="field-row c2">
+        <div class="form-group"><label for="f-name">Raison Sociale *</label><input id="f-name" name="fourn-name" autocomplete="organization" placeholder="Fournisseur SARL" required></div>
+        <div class="form-group"><label for="f-category">Catégorie</label><input id="f-category" name="fourn-category" placeholder="Ex: Matières premières..."></div>
+      </div>
+
+      <div class="settings-divider"></div>
+      <div class="settings-mini-title">Informations légales DGI</div>
+
+      <div class="field-row c2">
+        <div class="form-group"><label for="f-ice">ICE <span class="settings-help-inline">(15 chiffres — clé DGI sur les 2 derniers)</span></label><input id="f-ice" name="fourn-ice" placeholder="000000000000000" maxlength="15" inputmode="numeric" title="Saisir l’ICE exact figurant sur vos pièces (les 2 derniers chiffres sont une clé de contrôle ; 15 chiffres au hasard peuvent être refusés par la vérification.)"></div>
+        <div class="form-group"><label for="f-if">IF</label><input id="f-if" name="fourn-if" placeholder="00000000" maxlength="8" inputmode="numeric"></div>
+      </div>
+
+      <div class="settings-divider"></div>
+      <div class="settings-mini-title">Contact</div>
+
+      <div class="field-row c2">
+        <div class="form-group"><label for="f-email">Email</label><input id="f-email" name="fourn-email" type="email" inputmode="email" autocomplete="email" placeholder="contact@fournisseur.ma"></div>
+        <div class="form-group"><label for="f-phone">Téléphone</label><input id="f-phone" name="fourn-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+212 6XX XX XX XX"></div>
+      </div>
+      <div class="field-row c2">
+        <div class="form-group"><label for="f-city">Ville</label><input id="f-city" name="fourn-city" autocomplete="address-level2" placeholder="Casablanca"></div>
+        <div class="form-group"><label for="f-address">Adresse</label><input id="f-address" name="fourn-address" autocomplete="street-address" placeholder="Rue, Quartier"></div>
+      </div>
+      <div class="form-group"><label for="f-notes">Notes</label><textarea id="f-notes" name="fourn-notes" rows="2" placeholder="Notes internes, délais, conditions..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-cancel-fourn">Annuler</button>
+      <button class="btn btn-primary" id="btn-save-fourn"><span aria-hidden="true">💾</span> Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL PREVIEW PDF ══ -->
+<div class="modal-overlay" id="modal-preview-pdf" role="dialog" aria-modal="true" aria-labelledby="preview-pdf-modal-title" aria-hidden="true">
+  <div class="modal pdf-preview-modal">
+    <div class="modal-header pdf-preview-header pdf-preview-header-fixed">
+      <div class="pdf-preview-header-brand">
+        <div class="pdf-preview-header-icon-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="pdf-preview-header-titles">
+          <div class="modal-title" id="preview-pdf-modal-title">Aperçu du Document</div>
+          <div class="pdf-preview-subtitle" id="preview-pdf-subtitle">Prévisualisation avant impression</div>
+        </div>
+      </div>
+      <button class="btn pdf-preview-btn-dl pdf-preview-btn-dl-tone pdf-preview-btn-inline" id="btn-dl-preview">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+        Télécharger PDF
+      </button>
+      <button type="button" class="modal-close" id="btn-close-preview" aria-label="Fermer l’aperçu"><span aria-hidden="true">✕</span></button>
+    </div>
+    <!-- Template selector strip -->
+    <div class="pdf-preview-strip">
+      <span class="pdf-preview-strip-label">Template :</span>
+      <div class="pdf-preview-tabs" id="preview-tpl-tabs">
+        <button class="pvtpl-btn" data-tpl="classic">Classic</button>
+        <button class="pvtpl-btn" data-tpl="modern">Modern</button>
+        <button class="pvtpl-btn" data-tpl="minimal">Minimal</button>
+        <button class="pvtpl-btn" data-tpl="executive">Executive</button>
+      </div>
+      <div class="pdf-preview-sep"></div>
+      <span class="pdf-preview-strip-label">Couleur bande :</span>
+      <input type="color" id="preview-band-color" value="#1a6b3c" class="pdf-preview-band-color">
+      <div class="pdf-preview-sep"></div>
+      <span class="pdf-preview-strip-label" title="Hauteur du logo (largeur proportionnelle)">Logo :</span>
+      <input type="range" id="preview-logo-height" min="24" max="120" step="1" value="48" class="pdf-preview-logo-range" oninput="var t=document.getElementById('preview-logo-height-val');if(t)t.textContent=this.value">
+      <span id="preview-logo-height-val" class="pdf-preview-logo-val">48</span>
+      <span class="pdf-preview-logo-unit">px</span>
+      <div class="pdf-preview-sep"></div>
+      <label class="ui-toggle pdf-preview-strip-toggle" for="preview-show-company-with-logo">
+        <input type="checkbox" id="preview-show-company-with-logo" class="ui-toggle-input" role="switch" checked>
+        <span class="ui-toggle-track" aria-hidden="true"></span>
+        <span class="pdf-preview-strip-toggle-text">Afficher les informations de l’entreprise avec le logo</span>
+      </label>
+      <div class="pdf-preview-spacer"></div>
+      <span class="pdf-preview-tpl-label" id="preview-tpl-label">Template : Classic</span>
+    </div>
+    <!-- iFrame preview -->
+    <div class="pdf-preview-frame-wrap">
+      <iframe id="preview-iframe" class="pdf-preview-iframe" title="Aperçu à la largeur du document (794px)" sandbox="allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-article" role="dialog" aria-modal="true" aria-labelledby="article-modal-title" aria-hidden="true">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="article-modal-title">Ajouter un article</div><button type="button" class="modal-close" id="btn-close-article" aria-label="Fermer"><span aria-hidden="true">✕</span></button></div>
+    <div class="modal-body">
+      <div class="field-row c2"><div class="form-group"><label for="a-name">Désignation *</label><input id="a-name" name="article-name" placeholder="Nom de l'article" required></div><div class="form-group"><label for="a-barcode">Code barre</label><input id="a-barcode" name="article-barcode" placeholder="EAN-13"></div></div>
+      <div class="field-row c2"><div class="form-group"><label for="a-category">Catégorie</label><input id="a-category" name="article-category" placeholder="Ex: Boissons..."></div><div class="form-group"><label for="a-qty">Quantité</label><input id="a-qty" name="article-qty" type="number" inputmode="decimal" value="0" min="0"></div></div>
+      <div class="field-row c2"><div class="form-group"><label for="a-buy" id="label-a-buy">Prix d'achat (TTC)</label><input id="a-buy" name="article-buy" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"><div id="a-buy-hint" class="article-price-hint" hidden></div></div><div class="form-group"><label for="a-sell" id="label-a-sell">Prix de vente (TTC)</label><input id="a-sell" name="article-sell" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"><div id="a-sell-hint" class="article-price-hint" hidden></div></div></div>
+      <div class="form-group"><label for="a-desc">Description</label><textarea id="a-desc" name="article-desc" rows="2" placeholder="Description optionnelle..."></textarea></div>
+      <div class="form-group"><label for="a-fournisseur">Fournisseur</label><select id="a-fournisseur" name="article-fournisseur"><option value="">— Aucun fournisseur —</option></select></div>
+      <div class="alert info margin-preview-hidden" id="margin-preview">Marge: <strong id="margin-val"></strong></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" id="btn-cancel-article">Annuler</button><button class="btn btn-primary" id="btn-save-article">Sauvegarder</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-client" role="dialog" aria-modal="true" aria-labelledby="client-modal-title" aria-hidden="true">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="client-modal-title">Nouveau Client</div><button type="button" class="modal-close" id="btn-close-client" aria-label="Fermer"><span aria-hidden="true">✕</span></button></div>
+    <div class="modal-body">
+      <div class="client-type-grid">
+        <div id="c-card-part" data-client-type="particulier" class="client-type-card client-type-card-part">
+          <div class="client-type-emoji" aria-hidden="true">👤</div>
+          <div class="client-type-title client-type-title-part">Particulier</div>
+          <div class="client-type-subtitle">Personne physique</div>
+        </div>
+        <div id="c-card-pro" data-client-type="professionnel" class="client-type-card client-type-card-pro">
+          <div class="client-type-emoji" aria-hidden="true">🏢</div>
+          <div class="client-type-title">Professionnel</div>
+          <div class="client-type-subtitle">Entreprise, société</div>
+        </div>
+      </div>
+      <div class="field-row c2">
+        <div class="form-group"><label id="c-name-label" for="c-name">Nom complet *</label><input id="c-name" name="client-name" placeholder="Prénom Nom" required></div>
+        <div class="form-group"><label for="c-phone">Téléphone</label><input id="c-phone" name="client-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+212 6XX XX XX XX"></div>
+      </div>
+      <div class="field-row c2">
+        <div class="form-group"><label for="c-email">Email</label><input id="c-email" name="client-email" type="email" inputmode="email" autocomplete="email" placeholder="contact@client.ma"></div>
+        <div class="form-group"><label for="c-city">Ville</label><input id="c-city" name="client-city" autocomplete="address-level2" placeholder="Casablanca"></div>
+      </div>
+      <div id="c-pro-fields" class="client-pro-fields">
+        <div class="settings-divider"></div>
+        <div class="settings-mini-title">Informations légales DGI</div>
+        <div class="field-row c2">
+          <div class="form-group"><label for="c-ice">ICE <span class="client-ice-required">obligatoire TVA</span></label><input id="c-ice" name="client-ice" placeholder="000000000000000" maxlength="15" pattern="\d{15}" inputmode="numeric"></div>
+          <div class="form-group"><label for="c-if">IF</label><input id="c-if" name="client-if" placeholder="00000000" maxlength="8" pattern="\d{1,8}" inputmode="numeric"></div>
+        </div>
+        <div class="field-row c2">
+          <div class="form-group"><label for="c-rc">RC</label><input id="c-rc" name="client-rc" placeholder="00000" maxlength="6" pattern="\d{1,6}" inputmode="numeric"></div>
+          <div class="form-group"><label for="c-address">Adresse</label><input id="c-address" name="client-address" autocomplete="street-address" placeholder="Rue, Quartier"></div>
+        </div>
+      </div>
+      <div class="form-group"><label for="c-notes">Notes</label><textarea id="c-notes" name="client-notes" rows="2" placeholder="Notes internes..."></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" id="btn-cancel-client">Annuler</button><button class="btn btn-primary" id="btn-save-client">Sauvegarder</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL BON DE COMMANDE ══ -->
+<div class="modal-overlay" id="modal-bon-commande" role="dialog" aria-modal="true" aria-labelledby="bc-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="bc-modal-title">Nouveau bon de commande</div>
+      <button type="button" class="modal-close" id="btn-close-bc-modal" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row c2 bc-top-fields">
+        <div class="form-group">
+          <p class="bc-ref-label" id="bc-ref-label">Référence</p>
+          <div id="bc-ref-display" class="bc-ref-display" role="status" aria-labelledby="bc-ref-label">—</div>
+        </div>
+        <div class="form-group">
+          <label for="bc-fournisseur">Fournisseur *</label>
+          <select id="bc-fournisseur" name="bc-fournisseur"><option value="">— Choisir —</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="bc-notes">Notes</label>
+        <textarea id="bc-notes" name="bc-notes" rows="2" placeholder="Réf. côté fournisseur, conditions de livraison…"></textarea>
+      </div>
+      <div class="bc-lines-header">
+        <div class="bc-lines-title">Articles (stock)</div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-bc-add-stock"><span aria-hidden="true">📦</span> Ajouter depuis le stock</button>
+      </div>
+      <div class="tbl-wrap bc-lines-table-wrap">
+        <table>
+          <thead><tr><th>Article</th><th>Qté</th><th id="bc-th-pu">PU achat (TTC)</th><th>TVA %</th><th></th></tr></thead>
+          <tbody id="bc-lines-edit-tbody"></tbody>
+        </table>
+      </div>
+      <p class="bc-lines-note">Les articles sont liés au stock : la réception du bon augmente les quantités et met à jour le prix d’achat TTC si renseigné.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="btn-cancel-bc">Annuler</button>
+      <button type="button" class="btn btn-primary" id="btn-save-bc">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-bc-view" role="dialog" aria-modal="true" aria-labelledby="bc-view-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="bc-view-modal-title">Détail du bon</div>
+      <button type="button" class="modal-close" id="btn-close-bc-view" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body" id="bc-view-body"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="btn-close-bc-view-footer">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-bc-stock-picker" role="dialog" aria-modal="true" aria-labelledby="bc-stock-picker-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="bc-stock-picker-modal-title"><span aria-hidden="true">📦</span> Choisir un article</div>
+      <button type="button" class="modal-close" id="btn-close-bc-picker" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <p class="bc-picker-help">Priorité aux articles du fournisseur sélectionné ; sinon tous les articles du stock sont proposés.</p>
+      <label for="bc-picker-search" class="sr-only">Rechercher un article</label>
+      <input type="text" id="bc-picker-search" name="bc-picker-search" placeholder="🔍 Rechercher…" class="bc-picker-search" autocomplete="off">
+      <div class="tbl-wrap bc-picker-table-wrap">
+        <table>
+          <thead><tr><th>Article</th><th>Catégorie</th><th>Stock</th><th id="bc-picker-th-buy">P. achat (TTC)</th><th>TVA</th><th></th></tr></thead>
+          <tbody id="bc-picker-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-stock-picker" role="dialog" aria-modal="true" aria-labelledby="stock-picker-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title" id="stock-picker-modal-title"><span aria-hidden="true">🔍</span> Chercher dans le stock</div><button type="button" class="modal-close" id="btn-close-stock-picker" aria-label="Fermer"><span aria-hidden="true">✕</span></button></div>
+    <div class="modal-body">
+      <div class="stock-picker-toolbar">
+        <label for="picker-search" class="sr-only">Rechercher par nom, catégorie ou code barre</label>
+        <input type="text" id="picker-search" name="stock-picker-search" placeholder="🔍 Rechercher par nom, catégorie ou code barre..." class="stock-picker-search" autocomplete="off">
+        <button type="button" class="btn btn-secondary btn-sm stock-picker-scan-btn" id="btn-open-barcode-scan" title="Scanner un code barre avec la caméra">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="5" x2="3" y2="19"/><line x1="7" y1="5" x2="7" y2="19"/><line x1="11" y1="5" x2="11" y2="19"/>
+            <line x1="16" y1="5" x2="16" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/><line x1="21" y1="5" x2="21" y2="19"/>
+          </svg>
+          Scanner code barre
+        </button>
+      </div>
+      <div class="tbl-wrap stock-picker-table-wrap">
+        <table><thead><tr><th>Article</th><th>Catégorie</th><th>Stock</th><th id="picker-th-price">Prix vente (TTC)</th><th>TVA</th><th></th></tr></thead>
+        <tbody id="picker-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-barcode-scan" role="dialog" aria-modal="true" aria-labelledby="barcode-scan-modal-title" aria-hidden="true">
+  <div class="modal modal-barcode-scan">
+    <div class="modal-header">
+      <div class="modal-title" id="barcode-scan-modal-title"><span aria-hidden="true">📷</span> Scanner code barre</div>
+      <button type="button" class="modal-close" id="btn-close-barcode-scan" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body">
+      <p class="barcode-scan-help">Placez le code barre devant la caméra. Dès qu’il est détecté, la recherche est remplie automatiquement.</p>
+      <div class="barcode-scan-video-wrap">
+        <video id="barcode-video" autoplay playsinline muted class="barcode-scan-video"></video>
+        <div class="barcode-scan-overlay"></div>
+      </div>
+      <div id="barcode-scan-status" class="barcode-scan-status">Initialisation de la caméra…</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-stop-barcode-scan">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-sales" role="dialog" aria-modal="true" aria-labelledby="sales-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title" id="sales-modal-title"><span aria-hidden="true">📈</span> État des Ventes</div><button type="button" class="modal-close" id="btn-close-sales-modal" aria-label="Fermer"><span aria-hidden="true">✕</span></button></div>
+    <div class="modal-body" id="sales-content"></div>
+  </div>
+</div>
+
+<!-- NOUVEAU CLIENT MODAL -->
+<div class="modal-overlay" id="modal-new-client-quick" role="dialog" aria-modal="true" aria-labelledby="ncq-modal-title" aria-hidden="true">
+  <div class="modal modal-new-client-quick">
+    <div class="modal-header"><div class="modal-title" id="ncq-modal-title">Nouveau client</div><button type="button" class="modal-close" id="btn-close-ncq" aria-label="Fermer"><span aria-hidden="true">✕</span></button></div>
+    <div class="modal-body modal-body-ncq">
+      <div class="grid-modal-2 ncq-type-grid">
+        <div id="ncq-card-part" data-ncq-type="particulier" class="ncq-type-card ncq-type-card-part">
+          <div class="ncq-type-emoji" aria-hidden="true">👤</div>
+          <div class="ncq-type-title ncq-type-title-part">Particulier</div>
+          <div class="ncq-type-subtitle">Personne physique</div>
+        </div>
+        <div id="ncq-card-pro" data-ncq-type="professionnel" class="ncq-type-card ncq-type-card-pro">
+          <div class="ncq-type-emoji" aria-hidden="true">🏢</div>
+          <div class="ncq-type-title">Professionnel</div>
+          <div class="ncq-type-subtitle">Entreprise, société</div>
+        </div>
+      </div>
+      <div class="field-row c2 ncq-field-row-tight">
+        <div class="form-group"><label id="ncq-name-label" for="ncq-name">Nom complet *</label><input id="ncq-name" name="ncq-name" placeholder="Prénom Nom" required></div>
+        <div class="form-group"><label for="ncq-phone">Téléphone</label><input id="ncq-phone" name="ncq-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+212 6XX XX XX XX"></div>
+      </div>
+      <div class="form-group"><label for="ncq-email">Email</label><input id="ncq-email" name="ncq-email" type="email" inputmode="email" autocomplete="email" placeholder="email@exemple.ma"></div>
+      <div class="form-group"><label for="ncq-city">Ville</label><input id="ncq-city" name="ncq-city" autocomplete="address-level2" placeholder="Casablanca"></div>
+      <div id="ncq-pro-fields" class="ncq-pro-fields">
+        <div class="settings-divider"></div>
+        <div class="settings-mini-title">Informations légales DGI</div>
+        <div class="field-row c2 ncq-field-row-tight">
+          <div class="form-group"><label for="ncq-ice">ICE <span class="client-ice-required">obligatoire TVA</span></label><input id="ncq-ice" name="ncq-ice" placeholder="000000000000000" maxlength="15" pattern="\d{15}" inputmode="numeric"></div>
+          <div class="form-group"><label for="ncq-if">IF</label><input id="ncq-if" name="ncq-if" placeholder="00000000" maxlength="8" pattern="\d{1,8}" inputmode="numeric"></div>
+        </div>
+        <div class="field-row c2 ncq-field-row-tight">
+          <div class="form-group"><label for="ncq-rc">RC</label><input id="ncq-rc" name="ncq-rc" placeholder="00000" maxlength="6" pattern="\d{1,6}" inputmode="numeric"></div>
+          <div class="form-group"><label for="ncq-address">Adresse</label><input id="ncq-address" name="ncq-address" autocomplete="street-address" placeholder="Rue, Quartier"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-cancel-ncq">Annuler</button>
+      <button class="btn btn-primary" id="btn-save-ncq"><span aria-hidden="true">✓</span> Créer et sélectionner</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONVERSION DEVIS → FACTURE -->
+<div class="modal-overlay" id="modal-convert" role="dialog" aria-modal="true" aria-labelledby="convert-modal-title" aria-hidden="true">
+  <div class="modal modal-convert">
+    <div class="modal-header">
+      <div class="modal-title" id="convert-modal-title"><span aria-hidden="true">⚡</span> Conversion Devis → Facture</div>
+      <button type="button" class="modal-close" id="btn-close-convert" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body modal-body-convert">
+      <div class="conv-modal-header">
+        <div class="conv-modal-icon" aria-hidden="true">📝→📄</div>
+        <div>
+          <div class="conv-modal-title" id="conv-title">Convertir ce devis</div>
+          <div class="conv-modal-sub" id="conv-sub">Toutes les lignes, le client et les montants seront repris</div>
+        </div>
+      </div>
+
+      <!-- Flux visuel -->
+      <div class="conv-flow">
+        <div class="conv-flow-box from">
+          <div class="cf-label">Devis source</div>
+          <div class="cf-ref" id="conv-from-ref">D-2026-0001</div>
+          <div class="conv-sub-muted" id="conv-from-client">—</div>
+        </div>
+        <div class="conv-flow-arrow" aria-hidden="true">⟶</div>
+        <div class="conv-flow-box to">
+          <div class="cf-label">Nouvelle facture</div>
+          <div class="cf-ref" id="conv-to-ref">F-2026-0001</div>
+          <div class="conv-sub-brand">Générée automatiquement</div>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="conv-options-title">Options</div>
+
+      <label class="conv-option selected" id="conv-opt-date-wrap">
+        <input type="radio" name="conv-date-opt" id="conv-date-today" value="today" checked>
+        <div>
+          <div class="conv-option-label">Date d'aujourd'hui</div>
+          <div class="conv-option-desc">La facture est datée du jour de conversion</div>
+        </div>
+      </label>
+      <label class="conv-option" id="conv-opt-date-custom-wrap">
+        <input type="radio" name="conv-date-opt" id="conv-date-custom" value="custom">
+        <div class="conv-custom-date-trigger" id="conv-custom-date-trigger">
+          <div class="conv-option-label">Date personnalisée</div>
+          <input type="date" id="conv-custom-date" class="conv-custom-date-input">
+        </div>
+      </label>
+
+      <div class="conv-divider"></div>
+
+      <label class="conv-option selected conv-option-static">
+        <input type="checkbox" id="conv-keep-devis" checked class="conv-keep-checkbox">
+        <div>
+          <div class="conv-option-label">Marquer le devis comme "Converti"</div>
+          <div class="conv-option-desc">Le devis original reste accessible en historique avec le lien vers la facture</div>
+        </div>
+      </label>
+
+      <!-- Récap montant -->
+      <div class="conv-recap-box">
+        <div>
+          <div class="conv-recap-label">Montant TTC repris</div>
+          <div class="conv-recap-amount" id="conv-amount">0,00 DH</div>
+        </div>
+        <div class="conv-recap-count" id="conv-lines-count"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-cancel-convert">Annuler</button>
+      <button class="btn btn-primary btn-gap-sm" id="btn-confirm-convert">
+        <span aria-hidden="true">⚡</span> Convertir en Facture
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SPINNER PDF ══ -->
+<div id="pdf-spinner-overlay" class="pdf-spinner-overlay">
+  <div class="pdf-spinner-card">
+    <div id="pdf-spinner-ring" class="pdf-spinner-ring"></div>
+    <div class="pdf-spinner-text">
+      <div id="pdf-spinner-label" class="pdf-spinner-label">Génération PDF…</div>
+      <div id="pdf-spinner-step" class="pdf-spinner-step">Préparation du document</div>
+    </div>
+    <div class="pdf-spinner-progress">
+      <div id="pdf-spinner-bar" class="pdf-spinner-bar"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL CONFIRMATION UNIVERSELLE ══ -->
+<div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-hidden="true">
+  <div class="modal modal-confirm">
+    <div class="modal-header modal-confirm-header">
+      <div class="modal-confirm-title-wrap">
+        <span id="confirm-icon" class="confirm-icon" aria-hidden="true">⚠️</span>
+        <div class="modal-title" id="confirm-title">Confirmer</div>
+      </div>
+      <button type="button" class="modal-close" id="confirm-btn-close" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="modal-body modal-confirm-body">
+      <p id="confirm-message" class="confirm-message"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary"  id="confirm-btn-cancel">Annuler</button>
+      <button class="btn" id="confirm-btn-ok" >Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Librairies locales (npm → postinstall scripts/vendor-copy.mjs) ═══ -->
+<script src="js/vendor/jspdf.umd.min.js" defer></script>
+<script src="js/vendor/html2canvas.min.js" defer></script>
+<script src="js/vendor/chart.umd.min.js" defer></script>
+<script src="js/vendor/xlsx.full.min.js" defer></script>
+<script src="js/vendor/flatpickr.min.js" defer></script>
+<script src="js/vendor/flatpickr-fr.js" defer></script>
+<script src="js/vendor/supabase.umd.js" defer></script>
+
+<!-- ═══ Modules INVO (ordre strict de dépendances) ═══ -->
+<!-- DOMPurify local (pas de CDN) — avant sanitize + html-safe -->
+<script src="js/vendor/purify.min.js" defer></script>
+<script src="js/vendor/papaparse.min.js" defer></script>
+<script src="js/csv-parse.js" defer></script>
+<script src="js/sanitize.js" defer></script>
+<!-- 0. Échappement HTML / helpers DOM — avant tout module UI -->
+<script src="js/html-safe.js" defer></script>
+<!-- 0b. Templates des pages → #content (innerHTML, chargé après html-safe pour eslint) -->
+<script src="js/page-templates.js" defer></script>
+<!-- 1. Storage: OPFS + DB state — DOIT être chargé en premier -->
+<script src="js/storage.js" defer></script>
+<!-- Clé publique licence signée -->
+<!-- Activation licence signée (offline) -->
+<script src="js/license-activation.js" defer></script>
+<!-- 2. Auth: écran activation + verrouillage session -->
+<script src="js/auth-templates.js" defer></script>
+<script src="js/auth.js" defer></script>
+<!-- 3. UI: toast, modals, spinner, charts, nav -->
+<script src="js/ui.js" defer></script>
+<!-- 4. PDF: génération, templates, impression -->
+<script src="js/pdf.js" defer></script>
+<!-- 5. Entities : backup → products → imports → clients → invoices -->
+<script src="js/backup.js" defer></script>
+<script src="js/supabase-sync.js" defer></script>
+<script src="js/products.js" defer></script>
+<script src="js/imports.js" defer></script>
+<script src="js/clients.js" defer></script>
+<script src="js/invoices.js" defer></script>
+<!-- 5b. Mode de saisie PU (TTC/HT) — avant docs.js -->
+<script src="js/price-mode.js" defer></script>
+<!-- 6. Docs: factures, DGI, historique, rapports -->
+<script src="js/docs.js" defer></script>
+<!-- 7. Fournisseurs: CRUD fournisseurs, import/export CSV -->
+<script src="js/fournisseurs.js" defer></script>
+<script src="js/bons-commande.js" defer></script>
+<!-- 8. App: boot, init, point d'entrée -->
+<script src="js/app.js" defer></script>
+<!-- 9. Events: tous les addEventListener (en dernier) -->
+<script src="js/events.js" defer></script>
+<!-- 10. SW Register: PWA install + offline (en tout dernier) -->
+<script src="sw-register.js" defer></script>
+
+</body>
+</html>

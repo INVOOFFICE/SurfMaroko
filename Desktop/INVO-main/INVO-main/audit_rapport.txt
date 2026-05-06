@@ -1,0 +1,547 @@
+═══════════════════════════════════════════════════════════════════════════════
+  AUDIT COMPLET — INVOOFFICE PWA OFFLINE
+  Date : 2026-04-04
+  Analysé par : Claude Code (claude-sonnet-4-6)
+═══════════════════════════════════════════════════════════════════════════════
+
+RÉSUMÉ EXÉCUTIF
+───────────────
+Application  : INVOOFFICE — Facturation DGI Maroc
+Type         : PWA 100 % hors-ligne, usage personnel / TPE
+Stack        : HTML + CSS modulaire + JavaScript vanilla, aucun framework
+Stockage     : OPFS (Origin Private File System) + fallback localStorage
+Score global : 7,4 / 10
+
+Points forts : manifest solide, Service Worker bien conçu, DOMPurify intégré,
+               CSP stricte, offline-first complet, design system cohérent.
+Axes d'amélioration : secret hardcodé, module monolithiques, pas de tests E2E,
+                      accessibilité partielle, données OPFS non chiffrées.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  1. SERVICE WORKER  (sw.js)
+════════════════════════════════════════════════════════════════════════════════
+
+CACHE_NAME : 'invo-v10'
+Stratégies :
+  • Cache First  → shell + assets statiques (JS, CSS, fonts, images, manifest)
+  • Network First sans cache → tout autre chemin (futur API, routes inconnues)
+  • Offline Fallback → retour index.html (navigation), JS vide, CSS vide, 503
+
+PRECACHE_ASSETS : 71 fichiers listés explicitement (critiques + optionnels)
+  Critiques  : index.html, tous JS, tous CSS, fonts WOFF2, icônes, manifest
+  Optionnels : screenshots/ (non bloquants si absents)
+
+CYCLE DE VIE :
+  install  → précache critique, skipWaiting auto en cas de succès
+  activate → purge tous les anciens caches (≠ CACHE_NAME), clients.claim()
+  fetch    → routing par URL, ignore chrome-extension://
+  message  → SKIP_WAITING accepté depuis sw-register.js
+
+POINTS POSITIFS :
+  ✅ Stratégie Cache First cohérente pour assets statiques
+  ✅ Purge automatique des anciens caches à l'activation
+  ✅ clients.claim() → prise de contrôle immédiate sans rechargement
+  ✅ Offline fallback pour HTML, JS, CSS
+  ✅ Broadcast postMessage vers les clients en cas d'échec critique
+  ✅ Ressources optionnelles (screenshots) non bloquantes
+  ✅ Ignorer chrome-extension:// (bonne pratique)
+
+PROBLÈMES DÉTECTÉS :
+  [P1-MINEUR] sw.js lui-même est dans PRECACHE_ASSETS. Si le SW change, le
+              navigateur le re-télécharge de toute façon (double effort, pas
+              de bug réel, mais c'est inutile de le précacher).
+
+  [P2-MINEUR] isAppShellRequest() inclut tout .js/.css/.png/.svg/.woff2.
+              Si un futur endpoint API retourne .js (ex. /api/data.json),
+              il serait mis en Cache First par erreur. Non problématique
+              aujourd'hui car 100 % local, mais fragile à l'évolution.
+
+  [P3-MINEUR] networkFirstNoCache ignore silencieusement tous les échecs
+              fetch (catch _). Aucun log de débogage même si DEBUG=false.
+              Si une ressource dynamique échoue hors-ligne, l'utilisateur
+              voit juste un 503 sans message d'erreur.
+
+  [P4-INFO]  CACHE_NAME = 'invo-v10'. La checklist demande d'incrémenter
+             avant chaque déploiement modifiant des assets. Risque d'oubli
+             si pas automatisé.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  2. MANIFEST.JSON (installabilité PWA)
+════════════════════════════════════════════════════════════════════════════════
+
+Fichier : /manifest.json
+
+Champs présents :
+  id, name, short_name, description, start_url, scope, display,
+  display_override, background_color, theme_color, orientation, lang,
+  icons (4), screenshots (2), categories, prefer_related_applications
+
+POINTS POSITIFS :
+  ✅ Icônes : 4 variantes (192/512 standard + maskable) — minimal requis OK
+  ✅ display_override : window-controls-overlay → standalone → minimal-ui
+  ✅ Screenshots avec form_factor wide + narrow (améliore install prompt)
+  ✅ lang: "fr" déclaré
+  ✅ prefer_related_applications: false (ne redirige pas vers stores)
+  ✅ start_url et scope cohérents avec déploiement relatif
+
+PROBLÈMES DÉTECTÉS :
+  [P5-MINEUR] id: "./index.html" — la valeur id devrait être une URL absolue
+              ou un chemin stable. Si l'app change de sous-dossier, l'identité
+              PWA change et l'installation est perdue. Recommandé : "/"
+              ou un identifiant stable indépendant du chemin de fichier.
+
+  [P6-MINEUR] Aucun champ "shortcuts" défini. Pour une app de facturation,
+              des raccourcis (Nouvelle facture, Nouveau client) amélioreraient
+              l'UX sur Android/Chrome.
+
+  [P7-INFO]  Pas de "share_target" ni "file_handlers". Non critique pour
+             usage personnel, mais utile pour ouvrir un CSV depuis le
+             gestionnaire de fichiers.
+
+  [P8-MINEUR] Les icônes sont .png uniquement. Ajouter une icône SVG
+              (icon.svg déjà présent) dans le manifest améliorerait la
+              netteté sur écrans haute résolution.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  3. STOCKAGE LOCAL (OPFS + localStorage + sessionStorage)
+════════════════════════════════════════════════════════════════════════════════
+
+Fichier principal : /js/storage.js (896 lignes)
+
+Couches de stockage :
+  • OPFS (Origin Private File System) : couche principale
+    - Fichiers JSON versionnés : enveloppe { STORAGE_FORMAT_MARKER, data, ... }
+    - STORAGE_FORMAT_VERSION = 2
+  • localStorage : fallback (anciens navigateurs) + migration auto
+  • sessionStorage : session lock uniquement (invoo_app_session_lock)
+
+Clés OPFS :
+  invoo_settings, invoo_clients, invoo_stock, invoo_docs,
+  invoo_fournisseurs, invoo_bons_commande, invoo_stock_moves
+  invoo_activation_v3 (auth), invoo_db_version
+
+Clés localStorage :
+  invoo_device_seed_v1 (device fingerprint)
+  invoo_ios_hint (timestamp dernier hint iOS)
+
+DB_VERSION : 1 (migrations documentées requises si incrément)
+
+Chaîne d'écriture : _opfsWriteChain (Promise.resolve()) — évite les écritures
+  concurrentes et les états incohérents. Bonne pratique.
+
+POINTS POSITIFS :
+  ✅ OPFS préféré à localStorage (meilleur isolement, pas de limite 5 MB)
+  ✅ Fallback localStorage documenté pour compatibilité
+  ✅ Migration automatique localStorage → OPFS
+  ✅ Versionnement explicite (DB_VERSION, STORAGE_FORMAT_VERSION)
+  ✅ Chaîne d'écriture séquentielle pour éviter la corruption
+  ✅ Cache mémoire (_opfsMemCache) pour lectures rapides
+  ✅ window.APP.opfs encapsulation partielle (get/set via defineProperty)
+
+PROBLÈMES DÉTECTÉS :
+  [P9-IMPORTANT] Les données OPFS ne sont PAS chiffrées. Sur un appareil
+                 partagé ou volé, toutes les données métier (clients, factures,
+                 montants) sont lisibles via les DevTools ou l'API OPFS.
+                 Pour usage personnel, risque acceptable ; à documenter.
+
+  [P10-MOYEN] window.DB est un objet global exposé. N'importe quel script
+              peut le modifier directement (window.DB.clients = []). L'encap-
+              sulation via window.APP.opfs est partielle ; window.DB reste
+              non protégé.
+
+  [P11-MINEUR] Pas de schéma formel (TypeScript / JSDoc complet / JSON Schema)
+               pour les entités (client, document, produit). Les migrations
+               manuelles sont risquées si un champ est oublié.
+
+  [P12-MINEUR] En cas d'échec OPFS ET localStorage, les données sont perdues
+               silencieusement. Aucune UI d'avertissement "stockage indisponible"
+               n'a été trouvée dans storage.js.
+
+  [P13-INFO]  La clé invoo_device_seed_v1 reste en localStorage (pas migrée
+              en OPFS). Si l'utilisateur efface localStorage, le device ID
+              change et l'activation est potentiellement perdue.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  4. PERFORMANCE ET CHARGEMENT OFFLINE
+════════════════════════════════════════════════════════════════════════════════
+
+Chargement JS (index.html, lignes 1014-1061) :
+  Tous les scripts utilisent defer — chargement parallèle, exécution séquentielle.
+  Ordre strict respecté (vendor → sanitize → storage → auth → ui → métier → app → events → sw-register)
+
+Assets vendors (js/vendor/) :
+  jspdf.umd.min.js      : 356 KB (compressé GZIP ~140 KB)
+  xlsx.full.min.js      : 862 KB (compressé GZIP ~220 KB)
+  chart.umd.min.js      : 201 KB (compressé GZIP ~60 KB)
+  html2canvas.min.js    : 195 KB (compressé GZIP ~55 KB)
+  flatpickr.min.js      :  50 KB
+  purify.min.js         :  22 KB
+  papaparse.min.js      :  19 KB
+Total vendor (non gzippé) : ~1,7 MB
+
+Modules INVO :
+  docs.js               : ~3000 lignes
+  ui.js                 : ~1683 lignes
+  page-templates.js     : ~865 lignes
+  storage.js            : ~896 lignes
+  auth.js               : ~980 lignes
+
+Fonts : 6 poids WOFF2 pré-cachés (300 à 800). Le fichier fonts-plus-jakarta.css
+        charge aussi assets/fonts/plus-jakarta-sans/index.css qui peut requérir
+        des variants latins/cyrilliques/vietnamiens non utilisés.
+
+POINTS POSITIFS :
+  ✅ Tous les scripts en defer (pas de blocage rendu)
+  ✅ JS vanilla, pas de framework (bundle léger côté logique applicative)
+  ✅ Tous assets pré-cachés → chargement instantané hors-ligne au 2e visit
+  ✅ CSS modulaire (pas un seul gros fichier)
+  ✅ DEBUG = false en production (pas de console.log inutiles)
+
+PROBLÈMES DÉTECTÉS :
+  [P14-MOYEN] xlsx.full.min.js (862 KB) et jspdf.umd.min.js (356 KB) sont
+              chargés au démarrage même si l'utilisateur ne fait jamais
+              d'export. Chargement différé (import dynamique) réduirait
+              le Time-to-Interactive de ~500ms sur mobile moyen.
+
+  [P15-MOYEN] Tous les scripts défèrent mais s'exécutent séquentiellement
+              après DOMContentLoaded. Sur mobile lent, le boot peut prendre
+              2-3 secondes avant l'affichage de l'écran auth.
+              Aucun skeleton screen ou spinner de chargement initial visible
+              avant que app.js (dernier) n'appelle checkAuth().
+
+  [P16-MINEUR] 6 poids de police pré-cachés (300 à 800). L'application utilise
+               probablement surtout 400/500/600/700. Les poids 300 et 800 sont
+               peu utilisés. Économie possible : ~40-60 KB WOFF2.
+
+  [P17-MINEUR] page-templates.js (865 lignes) est un fichier généré par script
+               (build-page-templates.mjs). S'il n'est pas régénéré après
+               modification d'un template source, les pages affichent du contenu
+               obsolète sans avertissement.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  5. SÉCURITÉ CÔTÉ CLIENT
+════════════════════════════════════════════════════════════════════════════════
+
+5.1 Content Security Policy (index.html, ligne 13-27)
+  default-src 'self' data: blob:
+  script-src 'self'
+  style-src 'self' 'unsafe-inline'
+  img-src 'self' data: blob:
+  font-src 'self' data:
+  worker-src 'self' blob:
+  connect-src 'self' blob:
+  frame-src 'self' data: blob:
+  frame-ancestors 'none'
+  object-src 'none'
+  base-uri 'self'
+  form-action 'self'
+  upgrade-insecure-requests
+  block-all-mixed-content
+
+POINTS POSITIFS :
+  ✅ script-src 'self' strict (pas de CDN, pas d'inline JS)
+  ✅ frame-ancestors 'none' (protection clickjacking)
+  ✅ object-src 'none' (pas de plugins Flash/PDF externes)
+  ✅ base-uri 'self' (protection injection base tag)
+  ✅ upgrade-insecure-requests + block-all-mixed-content
+  ✅ Aucune ressource externe dans la CSP
+
+PROBLÈMES DÉTECTÉS :
+  [P18-MINEUR] style-src 'unsafe-inline' autorisé. Nécessaire pour les styles
+               inline générés dynamiquement dans sw-register.js et auth.js
+               (bannières, toasts). Difficile à éliminer sans refactorer les
+               composants inline. Risque faible car pas de données utilisateur
+               dans ces styles.
+
+5.2 XSS & Injection HTML
+  DOMPurify (purify.min.js) : intégré localement, pas de CDN
+  sanitize.js : wrapper DOMPurify.sanitize()
+  html-safe.js : helpers escapeHtml(), escapeAttr(), h() (createElement)
+  ESLint : règle no-restricted-syntax bloquant innerHTML direct
+
+POINTS POSITIFS :
+  ✅ DOMPurify local (pas dépendant d'un CDN)
+  ✅ setStaticHtml() obligatoire pour tout innerHTML
+  ✅ h() helper createElement sécurisé
+  ✅ escapeHtml/escapeAttr disponibles partout
+  ✅ highlightSegments() ne crée pas de HTML injectables
+  ✅ ESLint bloque innerHTML non documenté
+
+PROBLÈMES DÉTECTÉS :
+  Aucun problème XSS critique identifié dans les fichiers analysés.
+  Les exceptions innerHTML (html-safe.js, sw-register.js) sont documentées.
+
+5.3 Licence et Authentification (license-activation.js, auth.js)
+  Schéma : SHA-256(email | deviceId | SECRET)
+  SECRET : 'INVOO3388' (hardcodé dans license-activation.js ligne 7)
+  Comparaison : temps constant (XOR octet par octet) — bonne pratique
+  Session lock : PBKDF2 100 000 itérations (fort)
+  Device ID : seed aléatoire 16 bytes → SHA-256(fingerprint)
+
+PROBLÈMES DÉTECTÉS :
+  [P19-IMPORTANT] Le SECRET ('INVOO3388') est hardcodé dans le JS livré au
+                  navigateur. N'importe qui avec les DevTools peut le lire
+                  et générer des clés valides pour n'importe quel email +
+                  device ID. Pour usage personnel, risque acceptable puisque
+                  l'app est locale. Si distribuée, ce SECRET est compromis
+                  par nature (pas de backend = pas de secret côté serveur).
+                  À documenter clairement.
+
+  [P20-MOYEN] L'activation est stockée dans OPFS (invoo_activation_v3) sans
+              chiffrement. Sur un appareil partagé, un autre utilisateur avec
+              accès aux DevTools peut voir l'état d'activation, le hash du
+              mot de passe, et le salt PBKDF2.
+
+  [P21-MINEUR] La session lock (invoo_app_session_lock = '1' en sessionStorage)
+               est binaire. Si l'utilisateur n'a pas configuré de mot de passe,
+               la session est déverrouillée automatiquement. Aucun avertissement
+               ne suggère de définir un mot de passe.
+
+5.4 Dépendances (package.json)
+  dompurify    3.2.5  — à jour
+  jspdf        2.5.1  — à jour
+  html2canvas  1.4.1  — dernière version stable
+  xlsx         0.18.5 — version figée (sheetjs legacy)
+  chart.js     4.4.1  — à jour
+  papaparse    5.5.3  — à jour
+  flatpickr    4.6.13 — dernière version
+
+PROBLÈMES DÉTECTÉS :
+  [P22-MINEUR] xlsx version 0.18.5 correspond à l'ancienne version open-source
+               de SheetJS (avant passage en licence commerciale). Des CVE mineurs
+               existent sur cette branche. À surveiller. Alternative :
+               exceljs (MIT) si migration envisagée.
+
+  [P23-INFO]  Aucun npm audit --production n'est documenté dans la checklist
+              de release. Recommandé de l'ajouter.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  6. COMPATIBILITÉ MOBILE
+════════════════════════════════════════════════════════════════════════════════
+
+Meta tags PWA (index.html) :
+  apple-mobile-web-app-capable: yes
+  apple-mobile-web-app-status-bar-style: black-translucent
+  apple-mobile-web-app-title: INVOOFFICE
+  apple-touch-icon: icons/icon-512.png
+  mobile-web-app-capable: yes (Android Chrome)
+  theme-color: #09BC8A
+
+Layout mobile (css/pages/) :
+  Breakpoints : 1024px (tablet), 768px (mobile), 480px (small)
+  Mobile : bottom tabbar, sidebar overlay, FAB (+), swipe-to-close sidebar
+  Touch events : touchstart/touchend avec { passive: true } (app.js)
+  Inputs : height = --control-h (40px) — touch-friendly
+
+iOS Safari :
+  Hint d'installation (Partager → Sur l'écran d'accueil) affiché 1×/7 jours
+  Désactivation auto si déjà standalone
+  Stockage : OPFS supporté iOS 16.4+ (Safari ≥ 16.4)
+
+POINTS POSITIFS :
+  ✅ Touch events passifs (performance scroll)
+  ✅ Bottom tabbar mobile (navigation thumb-friendly)
+  ✅ Swipe sidebar (UX native)
+  ✅ FAB pour actions principales
+  ✅ apple-touch-icon configuré
+  ✅ Hint iOS personnalisé avec throttle 7 jours
+  ✅ Responsive complet (3 breakpoints)
+
+PROBLÈMES DÉTECTÉS :
+  [P24-MOYEN] OPFS n'est disponible que depuis iOS 16.4 / Safari 16.4 (2023).
+              Sur iOS 15 ou Safari < 16.4, le fallback localStorage est utilisé
+              mais est limité à 5-10 MB selon les navigateurs. Aucun message
+              d'avertissement à l'utilisateur si OPFS échoue et localStorage
+              prend le relais.
+
+  [P25-MINEUR] apple-touch-icon pointe vers icons/icon-512.png (512px).
+               Apple recommande 180×180px. Le navigateur redimensionnera,
+               mais fournir une variante 180×180 est la bonne pratique.
+
+  [P26-MINEUR] Le banner d'installation iOS apparaît après 2,5 secondes et
+               disparaît après 10 secondes. Sur les petits écrans (iPhone SE,
+               375px), le banner peut déborder ou être partiellement masqué
+               par le tabbar du bas.
+
+  [P27-INFO]  Aucun test sur Firefox mobile documenté. Firefox supporte OPFS
+              mais pas beforeinstallprompt (pas d'installation PWA native).
+              Le fallback manuel hint sera affiché — comportement correct mais
+              non testé explicitement.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  7. FICHIERS MANQUANTS OU CASSÉS
+════════════════════════════════════════════════════════════════════════════════
+
+Vérification des références depuis sw.js PRECACHE_ASSETS et index.html :
+
+TROUVÉS ET VALIDES :
+  ✅ index.html
+  ✅ manifest.json
+  ✅ sw.js, sw-register.js
+  ✅ icon.svg, privacy.html
+  ✅ icons/icon-192.png, icon-512.png, icon-maskable-192.png, icon-maskable-512.png
+  ✅ screenshots/screenshot-desktop.png, screenshot-mobile.png
+  ✅ Tous les fichiers CSS listés (css/tokens.css, style.css, etc.)
+  ✅ Tous les modules JS (js/app.js, auth.js, storage.js, etc.)
+  ✅ Tous les vendors (js/vendor/*.js, js/vendor/flatpickr.min.css)
+  ✅ Fonts WOFF2 (plus-jakarta-sans weights 300-800 latin)
+
+PROBLÈMES DÉTECTÉS :
+  [P28-MINEUR] Le fichier assets/fonts/plus-jakarta-sans/index.css est référencé
+               dans fonts-plus-jakarta.css mais n'est PAS dans PRECACHE_ASSETS.
+               Si ce fichier contient des @font-face supplémentaires, ils ne seront
+               pas disponibles hors-ligne au premier chargement.
+
+  [P29-MINEUR] js/vendor/flatpickr.min.css est dans PRECACHE_ASSETS mais le
+               chargement dans index.html se fait via :
+                 <link rel="stylesheet" href="js/vendor/flatpickr.min.css">
+               Vérifier que le chemin correspond exactement (sensible à la casse
+               sur Linux/serveur).
+
+  [P30-INFO]  Les fichiers vides "cd", "git", "main" à la racine du projet
+              (artifacts git probable) ne sont pas référencés mais polluent
+              la racine. À supprimer.
+
+  [P31-INFO]  js/price-mode.js n'est pas dans PRECACHE_ASSETS de sw.js alors
+              qu'il est chargé dans index.html. Vérification requise : si ce
+              fichier manque hors-ligne, les recalculs HT/TTC échoueront.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  8. ACCESSIBILITÉ (a11y)
+════════════════════════════════════════════════════════════════════════════════
+
+Ce qui est bien :
+  ✅ role="dialog" + aria-modal="true" sur les modales (index.html)
+  ✅ aria-hidden="true" sur les éléments décoratifs (emojis, SVG)
+  ✅ .sr-only pour labels screen readers
+  ✅ type="button" sur tous les boutons (page-templates.js)
+  ✅ Labels associés aux inputs (for/id)
+  ✅ fieldset pour groupes de période
+
+PROBLÈMES DÉTECTÉS :
+  [P32-MOYEN] ui.js (1683 lignes) et docs.js (3051 lignes) non audités
+              Lighthouse. Des tableaux dynamiques, des modales générées et
+              des toasts peuvent manquer de gestion du focus ou d'annonces
+              aria-live.
+
+  [P33-MINEUR] Le menu de navigation latéral (sidebar) n'a pas de aria-label
+               explicite dans l'HTML de base. Les screen readers liront
+               "Navigation" générique.
+
+  [P34-MINEUR] Les toasts (#toast) n'ont pas de rôle aria-live="polite" ou
+               aria-live="assertive" déclaré dans index.html. Les annonces
+               de succès/erreur ne sont pas lues par les lecteurs d'écran.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  9. QUALITÉ DE CODE & MAINTENABILITÉ
+════════════════════════════════════════════════════════════════════════════════
+
+  [P35-MOYEN] docs.js 3051 lignes : logique PDF, validation DGI, calculs TVA,
+              templates HTML et CRUD mélangés. Difficile à maintenir et tester.
+
+  [P36-MOYEN] ui.js 1683 lignes : navigation, toasts, charts, spinners, modales.
+              Module fourre-tout difficile à tester unitairement.
+
+  [P37-MOYEN] page-templates.js (865 lignes) est généré par script. Si le
+              développeur modifie directement ce fichier sans régénérer via
+              build-page-templates.mjs, les changements sont écrasés à la
+              prochaine exécution du script. Aucun en-tête "NE PAS MODIFIER"
+              dans le fichier généré.
+
+  [P38-MINEUR] window.DB et de nombreuses fonctions (nav, toast, checkAuth...)
+               sont des globaux. Risque de collision si un script tiers est
+               ajouté. Pas critique aujourd'hui.
+
+  [P39-INFO]  Aucun test E2E (Playwright / Cypress). Les parcours métier
+              (activation → création facture → export PDF → backup) ne sont
+              pas testés automatiquement.
+
+
+════════════════════════════════════════════════════════════════════════════════
+  10. SCORECARD FINAL
+════════════════════════════════════════════════════════════════════════════════
+
+  Dimension                  | Score | Justification
+  ───────────────────────────|───────|──────────────────────────────────────────
+  Service Worker & Cache     |  8.5  | Stratégies correctes, lifecycle propre
+  Manifest PWA               |  8.0  | Complet, manque shortcuts + SVG icon
+  Stockage local             |  7.5  | OPFS bon, pas de chiffrement, DB globale
+  Performance offline        |  7.0  | Vendors lourds chargés sans lazy load
+  Sécurité côté client       |  7.5  | CSP strict, DOMPurify, SECRET exposé
+  Compatibilité mobile       |  8.0  | Bon support iOS/Android, OPFS < iOS 16.4
+  Fichiers & intégrité       |  8.5  | Quasi complet, 2-3 refs manquantes
+  Accessibilité              |  6.5  | Partielle, toasts et tableaux non audités
+  Qualité & maintenabilité   |  6.5  | Modules trop gros, pas d'E2E
+  ───────────────────────────|───────|──────────────────────────────────────────
+  GLOBAL                     |  7.4  |
+
+
+════════════════════════════════════════════════════════════════════════════════
+  11. LISTE CONSOLIDÉE DES PROBLÈMES PAR PRIORITÉ
+════════════════════════════════════════════════════════════════════════════════
+
+  IMPORTANT (à traiter avant mise en production élargie)
+  ──────────────────────────────────────────────────────
+  [P9]  Données OPFS non chiffrées (risque sur appareil partagé)
+  [P19] SECRET licence hardcodé dans le JS (clé générée forçable)
+  [P31] js/price-mode.js absent de PRECACHE_ASSETS (mode offline)
+
+  MOYEN (amélioration recommandée)
+  ─────────────────────────────────
+  [P10] window.DB global non protégé
+  [P14] xlsx + jsPDF chargés au démarrage sans lazy loading
+  [P15] Pas de skeleton screen avant checkAuth()
+  [P20] État activation non chiffré en OPFS
+  [P21] Session lock sans avertissement "pas de mot de passe"
+  [P24] Pas d'avertissement si OPFS indisponible (iOS < 16.4)
+  [P32] ui.js / docs.js non audités Lighthouse (a11y tableaux, focus)
+  [P35] docs.js monolithique (3051 lignes)
+  [P36] ui.js monolithique (1683 lignes)
+  [P37] page-templates.js généré sans marqueur "NE PAS MODIFIER"
+
+  MINEUR (bonne pratique)
+  ──────────────────────
+  [P1]  sw.js inutilement dans PRECACHE_ASSETS
+  [P2]  isAppShellRequest trop large (tout .js/.css)
+  [P5]  manifest id non stable
+  [P6]  Pas de shortcuts dans manifest
+  [P8]  Pas d'icône SVG dans manifest
+  [P11] Pas de schéma formel pour les entités
+  [P12] Pas d'UI si stockage indisponible
+  [P13] invoo_device_seed_v1 dans localStorage (non OPFS)
+  [P16] 6 poids de fonts pré-cachés (300+800 peu utilisés)
+  [P17] page-templates.js risque de dérive si non régénéré
+  [P18] style-src unsafe-inline
+  [P22] xlsx 0.18.5 (ancienne branche SheetJS)
+  [P25] apple-touch-icon 512px (recommandé 180px)
+  [P26] Banner iOS peut déborder sur petits écrans
+  [P28] assets/fonts/index.css absent du précache
+  [P29] Vérifier casse chemin flatpickr.min.css
+  [P33] sidebar sans aria-label explicite
+  [P34] #toast sans aria-live
+
+  INFO
+  ────
+  [P3]  networkFirstNoCache sans log de débogage
+  [P4]  CACHE_NAME à incrémenter manuellement
+  [P7]  Pas de share_target / file_handlers
+  [P23] npm audit non documenté dans checklist release
+  [P27] Firefox mobile non testé explicitement
+  [P30] Fichiers vides "cd", "git", "main" à la racine
+  [P38] Nombreux globaux window.*
+  [P39] Aucun test E2E
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DU RAPPORT D'AUDIT
+  INVOOFFICE — 2026-04-04
+═══════════════════════════════════════════════════════════════════════════════

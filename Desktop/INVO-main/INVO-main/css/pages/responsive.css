@@ -1,0 +1,722 @@
+/* split chunk: responsive.css */
+@media (max-width: 768px) {
+  /* ─ Layout ─ */
+  html,
+  body {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #app {
+    flex-direction: column;
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: visible !important;
+    width: 100%;
+    padding-bottom: 60px;
+  }
+  #content {
+    flex: 1;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    padding: 12px;
+  }
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 260px !important;
+    overflow-y: auto;
+  }
+  #sidebar.mob-open {
+    transform: translateX(0);
+  }
+  #sidebar-overlay {
+    display: block;
+  }
+  #sidebar-overlay.open {
+    display: block;
+  }
+
+  /* ─ Topbar ─ */
+  #topbar {
+    padding: 0 12px;
+    gap: 8px;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+  }
+  .tb-title {
+    font-size: 14px;
+  }
+  .tb-badge {
+    display: none;
+  }
+  .search-trigger span:not(.search-trigger-key) {
+    display: none;
+  }
+  .search-trigger {
+    padding: 5px 8px;
+    min-width: 32px;
+  }
+  .search-trigger-key {
+    display: none;
+  }
+  .search-trigger,
+  .theme-toggle,
+  .notif-btn,
+  .tb-toggle,
+  .modal-close,
+  .pg-btn,
+  .btn-icon {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* ─ Tab bar ─ */
+  #mob-tabbar {
+    display: block;
+  }
+  #mob-fab {
+    display: flex;
+  }
+
+  /* ─ OPFS bar ─ */
+  .opfs-bar {
+    font-size: 10px;
+    padding: 4px 12px;
+    position: sticky;
+    top: 48px;
+    z-index: 79;
+  }
+  .opfs-bar span:last-child {
+    display: none;
+  }
+
+  /* ─ Page header ─ */
+  .page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+  .page-header h1 {
+    font-size: 18px;
+  }
+  .page-header > div:last-child {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .page-header .btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  #page-generate .page-header > div:last-child .btn {
+    min-width: 0;
+  }
+
+  /* ─ Grids → 1 column ─ */
+  .grid2,
+  .grid3,
+  .grid4 {
+    grid-template-columns: 1fr;
+  }
+  .dgi-items {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ─ Vue d'ensemble (mobile) : 1 panneau par ligne — CA mensuel, statuts, top clients, TVA, alertes, accès rapide ─ */
+  #page-overview .grid-chart-main,
+  #page-overview .grid-ov-bottom {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  #page-overview .grid-chart-main > .card,
+  #page-overview .grid-ov-bottom > .ov-panel {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* ─ Stat cards ─ */
+  .stat-val {
+    font-size: 22px;
+  }
+
+  /* ─ Forms ─ */
+  .field-row.c2,
+  .field-row.c3 {
+    grid-template-columns: 1fr;
+  }
+  input,
+  textarea {
+    font-size: 16px !important;
+    padding: 10px 12px;
+  } /* 16px évite le zoom iOS */
+  select {
+    font-size: 16px !important;
+    padding: 10px 44px 10px 12px;
+    min-height: 44px;
+  }
+  label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  #page-stock div[style*='min-width:200px'],
+  #page-clients div[style*='min-width:200px'],
+  #page-fournisseurs div[style*='min-width:200px'],
+  #page-bons-commande div[style*='min-width:200px'],
+  #page-history div[style*='min-width:150px'] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  /* ─ Générer document : réf. pleine ligne ; type + statut ; date pleine ; client pleine ─ */
+  #page-generate .grid-doc-config {
+    grid-template-columns: 1fr 1fr !important;
+    align-items: end !important;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(2) {
+    grid-column: 1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(3) {
+    grid-column: 2;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+  /* ─ Notes sous Règlement (ordre DOM déjà OK ; colonne unique sur mobile) ─ */
+  #page-generate .grid-doc-bottom {
+    grid-template-columns: 1fr !important;
+    display: grid;
+  }
+
+  /* ─ Invoice lines : ligne 1 désignation ; ligne 2 Prix U + Qté ; ligne 3 totaux + TVA ─ */
+  #doc-inv-header {
+    display: none !important;
+  }
+  .inv-line {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) 36px;
+    grid-template-areas:
+      'name name name name name name del'
+      'price price qty qty . . del'
+      'totalht totalht totalttc totalttc tva tva del';
+    gap: 6px;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--surface2);
+  }
+  .inv-cell-name {
+    grid-area: name;
+  }
+  .inv-cell-price {
+    grid-area: price;
+  }
+  .inv-cell-qty {
+    grid-area: qty;
+  }
+  .inv-cell-totalht {
+    grid-area: totalht;
+  }
+  .inv-cell-totalttc {
+    grid-area: totalttc;
+  }
+  .inv-cell-tva {
+    grid-area: tva;
+  }
+  .inv-line > .btn-icon {
+    grid-area: del;
+    align-self: start;
+    margin-top: 2px;
+  }
+  .inv-mini-label {
+    display: block;
+  }
+  .inv-cell-price,
+  .inv-cell-qty,
+  .inv-cell-totalht,
+  .inv-cell-totalttc,
+  .inv-cell-tva {
+    font-size: 11px;
+  }
+  .inv-line input,
+  .inv-line select {
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  .inv-line .btn-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .tselect-trigger {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  .tselect-option {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  #sum-financial-totals-row {
+    flex-direction: column !important;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  #sum-financial-totals-row > div {
+    width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+  }
+  #sum-financial-totals-row > div:last-child {
+    border-bottom: none;
+  }
+
+  /* ─ Tables → hidden, cards shown ─ */
+  .tbl-wrap {
+    display: none;
+  }
+  .mob-card-list {
+    display: block;
+  }
+  /* Les tableaux dans les modals doivent rester visibles sur mobile (import, pickers, BC). */
+  #modal-stock-picker .tbl-wrap,
+  #modal-stock-moves .tbl-wrap,
+  #modal-import-masse .tbl-wrap,
+  #modal-import-clients .tbl-wrap,
+  #modal-import-fourn .tbl-wrap,
+  #modal-bon-commande .tbl-wrap,
+  #modal-bc-stock-picker .tbl-wrap,
+  #modal-bc-view .tbl-wrap {
+    display: block;
+    overflow-x: auto;
+  }
+
+  /* ─ Modals ─ */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal {
+    border-radius: 18px 18px 0 0;
+    max-height: 92vh;
+    width: 100%;
+    max-width: 100%;
+  }
+  .modal-lg,
+  .modal-xl {
+    max-width: 100%;
+  }
+  .modal-header {
+    padding: 14px 16px;
+  }
+  .modal-body {
+    padding: 16px;
+  }
+  .modal-footer {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+  .modal-footer .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* ─ Settings sections ─ */
+  .settings-section-body {
+    padding: 14px;
+  }
+
+  /* ─ Charts / Reports ─ */
+  canvas {
+    max-height: 220px;
+  }
+
+  /* ─ DGI checker ─ */
+  .dgi-checker-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* ─ Filters row ─ */
+  div[style*='display:flex'][style*='gap:10px'] {
+    flex-wrap: wrap !important;
+  }
+  div[style*='display:flex'][style*='gap:10px'] > * {
+    flex: 1;
+    min-width: 120px;
+  }
+  div[style*='white-space:nowrap'] {
+    white-space: normal !important;
+  }
+  /* Historique mobile : Recherche+Type sur 1 ligne, Statut+Client sur 1 ligne */
+  #hist-filters-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px !important;
+    align-items: end;
+  }
+  #hist-filters-row .form-group {
+    margin: 0 !important;
+    min-width: 0 !important;
+  }
+  #hist-filters-row .form-group:nth-child(1) {
+    grid-column: 1;
+  } /* Recherche */
+  #hist-filters-row .form-group:nth-child(2) {
+    grid-column: 2;
+  } /* Type */
+  #hist-filters-row .form-group:nth-child(3) {
+    grid-column: 1;
+  } /* Statut */
+  #hist-filters-row .form-group:nth-child(4) {
+    grid-column: 2;
+  } /* Client */
+  #hist-filters-row .form-group:nth-child(5) {
+    grid-column: 1;
+  } /* À partir de */
+  #hist-filters-row .form-group:nth-child(6) {
+    grid-column: 2;
+  } /* Jusqu'à */
+  #hist-filters-row #btn-reset-hist {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  /* ─ Pagination ─ */
+  .pagination {
+    justify-content: center;
+  }
+
+  /* ─ Post-save bar ─ */
+  #post-save-bar {
+    padding: 10px 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  #post-save-bar > div:first-child {
+    width: 100%;
+  }
+  #post-save-bar > div:last-child {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  #post-save-bar .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* ─ Conv modal ─ */
+  .conv-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ─ Invoice lines toolbar ─ */
+  #line-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #line-actions .btn {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  /* ─ Toast ─ */
+  #toast {
+    bottom: 70px;
+    right: 12px;
+    left: 12px;
+  }
+  .toast-item {
+    max-width: 100%;
+  }
+
+  /* ─ Search panel (mobile responsive) ─ */
+  #search-panel {
+    top: max(8px, env(safe-area-inset-top));
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+    max-height: none;
+    border-radius: 14px;
+    transform: none;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #search-panel.open {
+    display: flex;
+  }
+  @supports (height: 100dvh) {
+    #search-panel {
+      height: calc(
+        100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom))
+      );
+    }
+  }
+  .search-input-wrap {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  #search-input {
+    font-size: 16px;
+  }
+  .search-shortcut {
+    display: none;
+  }
+  #search-results {
+    max-height: none;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .search-item {
+    min-height: 52px;
+    padding: 12px;
+  }
+
+  /* ─ Notif panel ─ */
+  #notif-panel {
+    right: 8px;
+    left: 8px;
+    width: auto;
+    top: 48px;
+  }
+  #modal-preview-pdf .modal {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0;
+  }
+  #preview-iframe {
+    width: 100% !important;
+    min-height: 58vh !important;
+  }
+
+  /* ─ Onboarding ─ */
+  .ob-card {
+    margin: 0 8px;
+    border-radius: 16px;
+  }
+  .ob-header {
+    padding: 20px 20px 0;
+  }
+  .ob-body {
+    padding: 14px 20px;
+  }
+  .ob-footer {
+    padding: 14px 20px 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ob-footer .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  #content {
+    padding: 8px;
+  }
+  .stat-val {
+    font-size: 20px;
+  }
+  .page-header h1 {
+    font-size: 16px;
+  }
+  .mob-card {
+    padding: 12px;
+  }
+  .dgi-items {
+    grid-template-columns: 1fr;
+  }
+  .inv-line {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) 32px;
+    grid-template-areas:
+      'name name name name name name del'
+      'price price qty qty . . del'
+      'totalht totalht totalttc totalttc tva tva del';
+    gap: 4px;
+    padding: 6px;
+  }
+  .inv-mini-label {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+  .inv-line input,
+  .inv-line select {
+    font-size: 11px !important;
+    min-height: 30px;
+    padding: 5px 6px;
+  }
+  .tselect-trigger {
+    min-height: 42px;
+    font-size: 14px;
+  }
+  .tselect-menu {
+    max-height: 46vh;
+  }
+  .btn {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+  .btn-sm {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+  .search-trigger,
+  .theme-toggle,
+  .notif-btn,
+  .tb-toggle,
+  .modal-close,
+  .pg-btn,
+  .btn-icon {
+    min-width: 38px;
+    min-height: 38px;
+  }
+  #page-generate .page-header > div:last-child {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  #page-generate .page-header > div:last-child .btn {
+    width: 100%;
+  }
+  #preview-tpl-tabs {
+    width: 100%;
+  }
+  .mob-card-actions .btn {
+    min-width: 0;
+  }
+  #bc-filter-status {
+    max-width: 100% !important;
+  }
+  #pdf-spinner-overlay > div {
+    min-width: 0 !important;
+    width: 92vw !important;
+    padding: 20px 16px !important;
+  }
+  #preview-pdf-subtitle {
+    display: none;
+  }
+  /* Grids */
+  .grid-chart-main,
+  .grid-ov-bottom,
+  .grid-report-split,
+  .grid-doc-bottom,
+  .grid-payment-cols,
+  .grid-settings-4,
+  .grid-modal-2 {
+    grid-template-columns: 1fr !important;
+  }
+  /* Config document : réf. seule ligne ; type+statut ; date ; client */
+  #page-generate .grid-doc-config {
+    grid-template-columns: 1fr 1fr !important;
+    align-items: end !important;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(2) {
+    grid-column: 1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(3) {
+    grid-column: 2;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Grids vue d'ensemble */
+  .grid-chart-main {
+    grid-template-columns: 1fr !important;
+  }
+  .grid-ov-bottom {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* Grids rapports */
+  .grid-report-split {
+    grid-template-columns: 1fr !important;
+  }
+  /* Grids génération document */
+  .grid-doc-config {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(2) {
+    grid-column: 1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(3) {
+    grid-column: 2;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+  #page-generate .grid-doc-config > .form-group:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+  .grid-doc-bottom {
+    grid-template-columns: 1fr !important;
+  }
+  /* Grids secondaires */
+  .grid-payment-cols {
+    grid-template-columns: 1fr !important;
+  }
+  .grid-settings-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .grid-modal-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 769px) {
+  #sidebar-overlay {
+    display: none !important;
+  }
+  #mob-tabbar {
+    display: none !important;
+  }
+  #mob-fab {
+    display: none !important;
+  }
+}
